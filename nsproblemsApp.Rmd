@@ -737,41 +737,77 @@ However, we also see the data in the table display change (even though we didn't
 knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdata-ui-server-x_var-table.png")
 ```
 
+<br>
+
+> ***Why did the table change even though we didn't change the input?***
+
+<br>
+
 ## Execution order
 
-*Why did the table change even though we didn't change the input?*  Well, the answer is covered here in the '[execution order](https://mastering-shiny.org/basic-reactivity.html#execution-order)' section of Mastering Shiny: 
+The answer to the question above is covered here in the '[execution order](https://mastering-shiny.org/basic-reactivity.html#execution-order)' section of Mastering Shiny: 
 
-***the order in which reactive code is run is determined only by the reactive graph, not by its layout in the server function.*** 
+***"the order in which reactive code is run is determined only by the reactive graph, not by its layout in the server function."*** 
 
 Recall the [reactive expression graph](https://mastering-shiny.org/basic-reactivity.html#reactive-expressions-1) from Mastering Shiny below: 
 
-![](https://d33wubrfki0l68.cloudfront.net/8dcc3f2cbc55486a76b33a5acd30e379cd05d8ab/27c40/diagrams/basic-reactivity/producers-consumers.png)
+<br>
 
-`graph` has a reactive dependency on `x_var`:
-
-```{r reactive-dependencypng, echo=FALSE, eval=TRUE}
-knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/reactive-dependency.png")
+```{r reactivity-producers-consumers, echo=FALSE, fig.align='center', out.height='80%', out.width='80%'}
+knitr::include_graphics("https://d33wubrfki0l68.cloudfront.net/8dcc3f2cbc55486a76b33a5acd30e379cd05d8ab/27c40/diagrams/basic-reactivity/producers-consumers.png")
 ```
+
+<br>
+
+### The graph dependencies 
+
+<br>
 
 When we include the reactive expression in the graph, `input$x_var` and `data()` are the **Producers**, while `data()` and `output$graph` are the **Consumers**.
 
-So, the `input$x_var` value in the graph changes when we select `bill_depth_mm`, and `data()` is changed in both `output$graph` *and* `output$table`. The table is only updated when the reactable `data()` is changed (i.e. when the graph uses these values explicitly in `aes_string(x = input$x_var)`). 
+<br>
 
 ```{r producers-consumers, echo=FALSE, eval=TRUE}
 knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/producers-consumers.png")
 ```
 
-Furthermore, when we changed the **X column (graph)**, the `input$x_var` value is 'taken' and updated in the graph (see the solid lines in the figure below). The `input$x_var` for **X column (table)** is ignored (see the dashed lines in the figure below) and the reactable table is not updated.
+<br>
 
-```{r plotdata-ui-server-x_var-data-png, echo=FALSE, eval=TRUE}
-knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdata-ui-server-x_var-data.png")
+But the `output$plot` also has a reactive dependency on `input$x_var`:
+
+```{r reactive-dependencypng, echo=FALSE, eval=TRUE, fig.align='center', out.height='80%', out.width='80%'}
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/reactive-dependency.png")
+```
+
+<br>
+
+
+
+So, the `input$x_var` value in the graph changes when we select `bill_depth_mm`, and `data()` is changed in both `output$graph` *and* `output$table`. The table is only updated when the reactable `data()` is changed (i.e. when the graph uses these values explicitly in `aes_string(x = input$x_var)`). 
+
+<br>
+
+
+
+<br>
+
+```{r plotdata-ui-server-x_var-data-png, echo=FALSE, eval=FALSE}
+# Furthermore, when we changed the **X column (graph)**, the `input$x_var` 
+# value is 'taken' and updated in the graph (see the solid lines in the 
+# figure below). The `input$x_var` for **X column (table)** is ignored (see 
+# the dashed lines in the figure below) and the reactable table is not updated.
+# knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdata-ui-server-x_var-data.png")
 ```
 
 If we check the the `reactiveValues` output, we can see there is only one column associated with the `$x_var` input (`bill_depth_mm`):
 
+<br>
+
 ```{r plotdata-ui-server-x_var-values-png, echo=FALSE, eval=TRUE}
 knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdata-ui-server-x_var-values.png")
 ```
+
+<br>
 
 ## Highlighting the problem 
 
