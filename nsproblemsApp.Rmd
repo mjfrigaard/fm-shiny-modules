@@ -722,19 +722,19 @@ shinyApp(
 This application has both the plot and table outputs, and six `selectInputs()`s for controlling the variables in the outputs (labeled **(table)** and **(graph)**). 
 
 ```{r plotdata-ui-server-png, echo=FALSE, eval=TRUE}
-knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdata-ui-server.png")
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdata-ui-server.png")
 ```
 
 To test the reactivity, we're going to change the variable for **X column (graph)** to `bill_depth_mm`. We should see the graph change (and we do):
 
 ```{r plotdata-ui-server-x_var-png, echo=FALSE, eval=TRUE}
-knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdata-ui-server-x_var.png")
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdata-ui-server-x_var.png")
 ```
 
 However, we also see the data in the table display change (even though we didn't change this input): 
 
 ```{r plotdata-ui-server-x_var-table-png, echo=FALSE, eval=TRUE}
-knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdata-ui-server-x_var-table.png")
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdata-ui-server-x_var-table.png")
 ```
 
 ## Execution order
@@ -750,7 +750,7 @@ Recall the [reactive expression graph](https://mastering-shiny.org/basic-reactiv
 `graph` has a reactive dependency on `x_var`:
 
 ```{r reactive-dependencypng, echo=FALSE, eval=TRUE}
-knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/reactive-dependency.png")
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/reactive-dependency.png")
 ```
 
 When we include the reactive expression in the graph, `input$x_var` and `data()` are the **Producers**, while `data()` and `output$graph` are the **Consumers**.
@@ -758,19 +758,19 @@ When we include the reactive expression in the graph, `input$x_var` and `data()`
 So, the `input$x_var` value in the graph changes when we select `bill_depth_mm`, and `data()` is changed in both `output$graph` *and* `output$table`. The table is only updated when the reactable `data()` is changed (i.e. when the graph uses these values explicitly in `aes_string(x = input$x_var)`). 
 
 ```{r producers-consumers, echo=FALSE, eval=TRUE}
-knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/producers-consumers.png")
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/producers-consumers.png")
 ```
 
 Furthermore, when we changed the **X column (graph)**, the `input$x_var` value is 'taken' and updated in the graph (see the solid lines in the figure below). The `input$x_var` for **X column (table)** is ignored (see the dashed lines in the figure below) and the reactable table is not updated.
 
 ```{r plotdata-ui-server-x_var-data-png, echo=FALSE, eval=TRUE}
-knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdata-ui-server-x_var-data.png")
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdata-ui-server-x_var-data.png")
 ```
 
 If we check the the `reactiveValues` output, we can see there is only one column associated with the `$x_var` input (`bill_depth_mm`):
 
 ```{r plotdata-ui-server-x_var-values-png, echo=FALSE, eval=TRUE}
-knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdata-ui-server-x_var-values.png")
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdata-ui-server-x_var-values.png")
 ```
 
 ## Highlighting the problem 
@@ -778,13 +778,13 @@ knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/
 If we deployed these apps using `display.mode = "showcase"` then we could see the `output$graph` and `output$table` light up when we change the **X column (graph)**:
 
 ```{r plotdataApp-x_var-gif, echo=FALSE, eval=TRUE}
-knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdataApp-x_var.gif")
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/nsproblems-change-x-col.gif")
 ```
 
 When we check the additional `selectInput()`s, we can see that only the values for **(graph)** trigger the code in the server (none of the values for **(table)** trigger a response).
 
 ```{r plotdataApp-x_var-no-reaction-gif, echo=FALSE, eval=TRUE}
-knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdataApp-x_var-no-reaction.gif")
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdataApp-x_var-no-reaction.gif")
 ```
 
 # Recap
