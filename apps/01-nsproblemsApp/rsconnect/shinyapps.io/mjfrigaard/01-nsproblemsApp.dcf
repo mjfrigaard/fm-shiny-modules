@@ -1,0 +1,14 @@
+name: 01-nsproblemsApp
+title: 01-nsproblemsApp
+username:
+account: mjfrigaard
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6094237
+bundleId: 5799989
+url: https://mjfrigaard.shinyapps.io/01-nsproblemsApp/
+when: 1649969691.12778
+lastSyncTime: 1649969691.12779
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: R/.DS_Store|R/server.R|R/ui.R

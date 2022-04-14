@@ -1,6 +1,6 @@
 # ===================================================#
 # File name: app.R
-# This is code to create: nsproblemsApp (single module)
+# This is code to create: nsproblemsApp (no modules)
 # Authored by and feedback to: mjfrigaard
 # Last updated: 2022-04-14
 # MIT License
@@ -114,7 +114,7 @@ server <- function(input, output, session) {
       )) +
       labs(
         title =
-          paste0("Histogram of ", x_lab, " and ", y_lab),
+          paste0("Scatter plot of ", x_lab, " and ", y_lab),
         x = x_lab,
         y = y_lab
       )

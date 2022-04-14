@@ -2,5 +2,6 @@ Title: nsproblemsPlot
 Author: Martin Frigaard
 AuthorUrl: https://github.com/mjfrigaard/fm-shiny-modules
 License: GPL-3
+DisplayMode: Showcase
 Tags: modules
 Type: Shiny
