@@ -1,0 +1,14 @@
+name: plotdataApp
+title: plotdataApp
+username:
+account: mjfrigaard
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5580288
+bundleId: 5563391
+url: https://mjfrigaard.shinyapps.io/plotdataApp/
+when: 1644463475.28003
+lastSyncTime: 1644463475.28004
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: R/dataServer.R|R/dataUI.R|R/modules.R|R/plotServer.R|R/plotUI.R

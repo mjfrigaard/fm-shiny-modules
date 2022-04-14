@@ -1,0 +1,16 @@
+name: "fm-shiny-modules"
+output_dir: "docs"
+exclude: ["apps/"]
+navbar:
+  title: "fm-shiny-modules"
+  left:
+    - text: "modules"
+      href: index.html
+    - text: "A problematic shiny app"
+      href: problemApp.html
+    - text: "A plot module"
+      href: plotMod.html
+    - text: "A data module"
+      href: dataMod.html
+    - text: "plot + data module"
+      href: plotdataMod.html

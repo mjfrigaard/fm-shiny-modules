@@ -1,0 +1,13 @@
+name: 01-plotdataApp
+title: 01-plotdataApp
+username:
+account: mjfrigaard
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5638185
+bundleId: 5571280
+url: https://mjfrigaard.shinyapps.io/01-plotdataApp/
+when: 1644638837.49043
+lastSyncTime: 1644638837.49043
+asMultiple: FALSE
+asStatic: FALSE

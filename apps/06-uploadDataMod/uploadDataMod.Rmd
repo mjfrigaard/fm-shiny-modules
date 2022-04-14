@@ -1,0 +1,99 @@
+---
+title: "Upload module"
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r setup, include = FALSE}
+library(shiny)
+library(data.table)
+library(tidyverse)
+library(purrr)
+library(vroom)
+library(reactable)
+library(haven)
+library(readxl)
+library(microbenchmark)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+# uploadApp
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+The goal of `uploadApp` is to have a module for uploading data into shiny. 
+
+## Uploading flat files
+
+```{r load_flat_file}
+load_flat_file <- function(name, path) {
+  ext <- tools::file_ext(name)
+  data <- switch(ext,
+    txt = data.table::fread(path),
+    csv = data.table::fread(path),
+    tsv = data.table::fread(path),
+    sas7bdat = haven::read_sas(data_file = path),
+    sas7bcat = haven::read_sas(data_file = path),
+    sav = haven::read_sav(file = path),
+    dta = haven::read_dta(file = path)
+  )
+  return_data <- as_tibble(data)
+  return(return_data)
+}
+```
+
+## Test data files
+
+Below we store the test data in `test_files`. 
+
+```{r test_files}
+all_file_paths <- list.files("data-raw", full.names = TRUE, recursive = TRUE)
+all_file_names <- map_chr(.x = all_file_paths, .f = basename)
+test_files <- set_names(x = all_file_paths, nm = all_file_names)
+test_files
+```
+
+## Test txt, csv, and tsv
+
+These all use the fread() function from `data.table`. 
+
+```{r txt}
+btxt <- load_flat_file(name = names(test_files["Batting.txt"]), 
+               path = test_files["Batting.txt"])
+ftxt <- load_flat_file(name = names(test_files["Fielding.txt"]), 
+               path = test_files["Fielding.txt"])
+ptxt <- load_flat_file(name = names(test_files["People.txt"]), 
+               path = test_files["People.txt"])
+```
+
+```{r csv}
+bcsv <- load_flat_file(name = names(test_files["Batting.csv"]), 
+               path = test_files["Batting.csv"])
+fcsv <- load_flat_file(name = names(test_files["Fielding.csv"]), 
+               path = test_files["Fielding.csv"])
+pcsv <- load_flat_file(name = names(test_files["People.csv"]), 
+               path = test_files["People.csv"])
+```
+
+```{r tsv}
+btsv <- load_flat_file(name = names(test_files["Batting.tsv"]), 
+               path = test_files["Batting.tsv"])
+ftsv <- load_flat_file(name = names(test_files["Fielding.tsv"]), 
+               path = test_files["Fielding.tsv"])
+ptsv <- load_flat_file(name = names(test_files["People.tsv"]), 
+               path = test_files["People.tsv"])
+```
+
+Batting: 
+
+```{r}
+glimpse(btxt)
+glimpse(bcsv)
+glimpse(btsv)
+```
+

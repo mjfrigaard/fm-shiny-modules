@@ -1,0 +1,45 @@
+---
+title: "fm-shiny-modules"
+output:
+  html_document:
+    theme: darkly
+    highlight: espresso
+    
+---
+
+<br>
+
+# Shiny module 'field manual'
+
+The goal for this field manual is to quickly demonstrate how to create modules in shiny apps. Modules help us avoid namespace collision with shiny inputs/outputs, and partition app components into smaller, more manageable (i.e. modular) pieces. This means we can have inputs/outputs with the same names in the same app (as long as they are in different modules). 
+
+Modules require the use of `shiny::NS()` for creating independent namespaces, which are then accessed with `shiny::moduleServer()`. 
+
+# Background
+
+When I first started creating shiny applications, I assumed complexity was just a natural by-product of their design. Even when I separated the app into separate `ui.R` and `server.R` scripts, it quickly became hard to manage all the inputs and outputs.
+
+I experimented with modules for awhile, but the concepts didn't start to click until shiny [version 1.5.0](https://shiny.rstudio.com/articles/modules.html) with the introduction of the [`moduleServer()`](https://shiny.rstudio.com/reference/shiny/1.7.0/moduleServer.html) function. This function (along with the `NS()` function) helped me understand the purpose of modules (and the problem they solve).
+
+This repo contains an application that demonstrates the problem caused by namespace collision (`problemApp`), two modules that separate the app components  (`plotMod` and `dataMod`), and a final app that combines both modules (`plotdataMod`) 
+
+I've also included some figures and tools for helping me understand how they work. The data used in this example comes from the [`palmerpenguins` package](https://allisonhorst.github.io/palmerpenguins/).
+
+# The problem: `problemApp`
+
+`problemApp` is an application with a plot and table display (no modules). It demonstrates the issue of having duplicate `inputId`s in the same namespace.
+
+
+# Module 1: `plotMod`
+
+The `plotMod` application contains a the plot module (with `plotUI()` and `plotServer()`)
+
+
+# Module 2: `dataMod`
+
+The `dataMod` application contains a the data module (with `dataUI()` and `dataServer()`)
+
+
+# Module 3: `plotdataMod` 
+
+`plotdataMod` combines `plotMod` and `dataMod` (while keeping identical input/output IDs).  

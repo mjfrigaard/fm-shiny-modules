@@ -1,0 +1,695 @@
+---
+title: "part 4: plotApp + dataApp = plotdataApp"
+author: "Martin Frigaard"
+output:
+  html_document: 
+    highlight: espresso
+    theme: darkly
+    source_code: embed
+    toc: true
+    toc_float: yes
+    df_print: paged
+    code_folding: show
+    
+runtime: shiny
+---
+
+```{r setup, include=FALSE}
+# xaringan::inf_mr() ----
+# xaringan::inf_mr()
+library(knitr)
+library(rmdformats)
+library(tidyverse)
+library(devtools)
+library(hrbrthemes)
+library(fs)
+library(shiny)
+library(reactable)
+# figs folder
+fs::dir_create('img')
+# Global options
+knitr::opts_chunk$set(
+  # cache = FALSE # cache data
+  echo = TRUE, # show/hide all code
+  # results = "hide", # hide results
+  tidy = FALSE, # cleaner code printing
+  comment = "#> ", # better console printing
+  eval = FALSE, # turn this to FALSE stop code chunks from running
+  message = TRUE, # show messages
+  warning = FALSE, # show warnings
+  size = "tiny", # size of the text
+  fig.path = "images", # location of figure files
+  fig.height = 7.5, # height of figures
+  fig.width = 10 # width of figures
+) 
+# knit options
+knitr::opts_knit$set(
+  width = 78,
+  progress = FALSE
+)
+# base options
+base::options(
+  tibble.print_max = 25,
+  tibble.width = 78,
+  max.print = 999999,
+  scipen = 100000000
+)
+```
+
+<br>
+
+# Module 3) plotApp + dataApp = plotdataMod
+
+So far we've created two modules in two separate apps:
+
+1. An app with a graph module ([**`plotApp`**](https://mjfrigaard.shinyapps.io/plotApp/)) that displays a graph with the [**`ggplot2`** package](https://ggplot2.tidyverse.org/).  
+
+2. An app with a data module ([**`dataApp`**](https://mjfrigaard.shinyapps.io/datApp/)) that displays a table with the [**`reactable`** package](https://glin.github.io/reactable/).
+
+In this lesson, we're going to combine the modules in the **`plotApp`** and **`dataApp`** into a single application. But first, we're going to circle back a bit and look at how the **`NS()`** function helps organize IDs, and how these IDs are accessed with **`moduleServer()`**. 
+
+# Namespaces
+
+<br>
+
+This is a quick post about namespaces in shiny modules. I'll cover how the **`NS()`** function helps organize IDs in the UI, and how these IDs are accessed in the server with **`moduleServer()`**. 
+
+<br>
+
+## Keeping track of all those inputIds/outputIds
+
+<br>
+
+As you can imagine, keeping track of all the IDs (**`inputId`**/**`input$`** and  **`outputId`**/**`output$`**) becomes [difficult and time consuming](https://engineering-shiny.org/structuring-project.html#a.-your-first-shiny-module). It's also hard to anticipate which names we'll need in the future, or the level of precision these names require. This is where modules and namespaces come in handy.
+
+<br>
+
+## What is a namespace in a shiny app?
+
+<br>
+
+#### ***"...a namespace is to an ID as a directory is to a file..."***
+
+<br>
+
+The quote above is from the [**`NS()`** help files](https://shiny.rstudio.com/reference/shiny/0.13.1/NS.html), and I've found it's a great way to conceptualize what **`NS()`** is creating. 
+
+If we imagine creating two files with identical names (**`file.R`** and **`file.R`**) we quickly discover they can't exist in the same directory. See what happens below when we try to create them in a directory named **`folder`**:
+
+```{r dir-directory, eval=FALSE}
+fs::dir_create("folder") # create directory
+fs::file_create("folder/file.R") # create file 1
+fs::file_create("folder/file.R") # create file 2 (same name)
+fs::dir_tree("folder") # check files in directory
+```
+
+```{r file-duplicate, eval=FALSE}
+folder/
+    └── file.R
+```
+
+<br>
+
+We can see there is only one **`file.R`** in the **`folder/`** directory (the second **`fs::file_create("folder/file.R")`** overwrote the first **`file.R`**). You've probably seen an error like this when trying to save two files with the same name into the same folder.  
+
+```{r remove-folder, echo=FALSE}
+unlink("folder", recursive = TRUE, force = TRUE)
+```
+
+However, we can have files with identical names in two *different* folders, but we have to reorganize the structure. Below we've created a parent folder (**`folder/`**) with two sub-folders (**`sub-folder-A/`** and **`sub-folder-B/`**), where we can place each file:
+
+```{r sub-folders, eval=TRUE, echo=FALSE}
+fs::dir_create("folder") # create parent directory
+fs::dir_create("folder/sub-folder-A") # create sub directory A
+fs::dir_create("folder/sub-folder-B") # create sub directory B
+fs::file_create("folder/sub-folder-A/file.R") # create file 1
+fs::file_create("folder/sub-folder-B/file.R") # create file 1
+```
+
+```{r remove-sub-folder, echo=FALSE}
+unlink("folder", recursive = TRUE, force = TRUE)
+```
+
+```{r sub-folder-tree, eval=FALSE}
+ folder/
+    ├── sub-folder-A/
+    │       └── file.R
+    └── sub-folder-B/
+            └── file.R
+```
+
+<br>
+
+By placing the files in sub-directories, we've made the ***path*** to each file unique, which makes it possible for them to have identical names. We can access these files using their ***unique path*** (not their unique name). The **`NS()`** function works in a similar way by creating a unique '***path***' for each ID the module. 
+
+<br>
+
+### Using **`NS()`**
+
+<br>
+
+Sometimes you'll see **`NS()`** used to create a separate **`ns()`** function, which is then used to define IDs in the module (i.e. **`ns <- shiny::NS(id)`** then **`ns("[name]"))`**: 
+
+```{r ns-code, eval=TRUE}
+text_example_01_UI <- function(id) {
+  ns <- shiny::NS(id)
+  tagList(
+    textAreaInput(inputId = ns("text_in"), 
+                  label = "Text"),
+    verbatimTextOutput(ns("text_out"))
+  )
+}
+text_example_01_UI(id = "text")
+```
+
+<br>
+
+Other times you'll see it written explicitly (with **`NS(namespace = id, id = "[name]")`**).
+
+```{r text_example_02_UI}
+text_example_02_UI <- function(id) {
+  tagList(
+    textAreaInput(inputId = NS(namespace = id, 
+                               id = "text_in"), 
+                  label = "Text"),
+    verbatimTextOutput(outputId = NS(namespace = id, 
+                               id = "text_out"))
+  )
+}
+text_example_02_UI(id = "text")
+```
+
+<br>
+
+As you can see, both methods work. This is because "*if **`id`** is missing, [**`NS()`**] returns a function that expects an **`id`** string as its only argument and returns that **`id`** with the namespace prepended.*"
+
+To see what the unique 'location' for a namespaced ID looks like, we can define our namespace in a string ("text"), then create a new object from **`NS()`** (**`name_Spaceded()`**) and examine it's contents:
+
+```{r example-name_Spaceded}
+# define a namespace
+id <- "text"
+# create the function
+name_Spaceded <- NS(namespace = id)
+# view the contents
+name_Spaceded
+```
+
+As we can see, the function created by **`NS()`** is pasting together two strings: the **`ns_prefix`** (the namespace prefix) and the **`id`**. 
+
+So if we supply an empty **`id`** to **`name_Spaceded()`**
+
+```{r empty-ns-id}
+# empty id
+name_Spaceded(id = "")
+```
+
+We can see the first **`id`** we passed was the name for the namespace. When we supply a character string to **`name_Spaceded()`** (imitating an **`inputId`** or **`outputId`**)...
+
+```{r name_Spaceded-id}
+# "namespace" the id
+name_Spaceded("text_in")
+```
+
+**`name_Spaceded()`** has replaced what would be **`input$text_in`**--shared globally across our entire application--with **`input$text_in`**, which is isolated in the **`text`** module.
+
+<br>
+
+## Module 'directory' structure
+
+<br>
+
+Just like we can't have identical file names in the same folder, we can't have two IDs with the same name in the same app. To get around this, we create modules by pairing **`NS()`** with **`moduleServer()`**:
+
++ In the UI module, **`NS()`** isolates the IDs into a namespace (pasting together **`ns_prefix`** and **`id`**), which we can access via **`moduleServer()`**.
+
++ In the server module, the **`moduleServer()`** function includes both **`id`** and **`module`** arguments. The **`id`** will be linked to it's complimentary UI function, and **`module`** is defined just like the standard shiny **`server`** function (**`function(input, output, session)`**). There is also a **`session`** argument, but it's almost always set to the default value.
+
+Below is an application folder-tree that mimics how IDs are contained within two module's namespaces: 
+
+```{r multp-files-and-dirs, eval=FALSE, echo=FALSE}
+# create 'folder' folder ----
+fs::dir_create("folder")
+fs::dir_create("folder/sub-folder-x")
+fs::file_create("folder/sub-folder-x/file01.R")
+fs::file_create("folder/sub-folder-x/file02.R")
+fs::dir_create("folder/sub-folder-y")
+fs::file_create("folder/sub-folder-y/file01.R")
+fs::file_create("folder/sub-folder-y/file02.R")
+fs::dir_tree("folder-a", regexp = "folder")
+unlink("folder-a", recursive = TRUE, force = TRUE)
+# create 'app' folder ----
+fs::dir_create("app")
+fs::dir_create("app/module-A")
+fs::dir_create("app/module-B")
+fs::file_create("app/module-A/UI-inputId-NS-id")
+fs::file_create("app/module-A/server-moduleServer-input")
+fs::file_create("app/module-A/UI-outputId-NS-id")
+fs::file_create("app/module-A/server-moduleServer-output-id")
+fs::file_create("app/module-B/UI-inputId-NS-id")
+fs::file_create("app/module-B/server-moduleServer-input-id")
+fs::file_create("app/module-B/UI-outputId-NS-id")
+fs::file_create("app/module-B/server-moduleServer-output-id")
+fs::dir_tree("app", regexp = "module")
+unlink("app", recursive = TRUE, force = TRUE)
+```
+
+<br>
+
+```{r app-module-foldeer-structure, eval=FALSE}
+  app/
+    ├── module-plot/ # plot module namespace 
+    │       ├── UI-inputId=NS(namespace = id, id = "x_variable")
+    │       ├── UI-inputId=NS(namespace = id, id = "y_variable")
+    │       ├── UI-inputId=NS(namespace = id, id = "color_variable")
+    │       ├── UI-outputId=NS(namespace = id, id = "plot")
+    │       └── server-moduleServer(id = id)
+    └── module-data/ # data module namespace 
+            ├── UI-inputId=NS(namespace = id, id = "x_variable")
+            ├── UI-inputId=NS(namespace = id, id = "y_variable")
+            ├── UI-inputId=NS(namespace = id, id = "color_variable")
+            ├── UI-outputId=NS(namespace = id, id = "table")
+            └── server-moduleServer(id = id)
+```
+
+<br>
+
+1. Within our **`app/`** directory, we have two modules (**`module-plot/`** and **`module-data/`**). 
+
+2. Each module has a list of IDs (**`inputId`**/**`outputId`**), which must be unique within the module's namespace (but they no longer have to be unique within the app)
+
+3. We use the **`NS()`** function to isolate and name the IDs into a namespace (i.e. **`id = "[name]"`**), then we access these IDs in the server with **`moduleServer()`** (which we will cover below).
+
+
+<br>
+
+
+## Example UI 
+
+
+<br>
+
+Below is an example UI function for a module with input and output functions and their IDs (**`input$x_variable`**, **`input$y_variable`**, and **`output$plot`**). 
+
+```{r exmaple-module-UI, eval=FALSE}
+example_module_UI <- function(id) {
+    tagList(
+        # input
+        selectInput(
+            inputId = NS(namespace = id, 
+                         id = "x_variable")
+            # ...additional arguments omitted...
+            ),
+        # input
+        selectInput(
+            inputId = NS(namespace = id, 
+                         id = "y_variable")
+            # ...additional arguments omitted...
+            ),
+        # input
+        selectInput(
+            inputId = NS(namespace = id, 
+                         id = "color_variable")
+            # ...additional arguments omitted...
+            ),
+        # output
+        plotOutput(
+            outputId = NS(namespace = id, 
+                         id = "plot"))
+    )
+}
+```
+
+
+<br>
+
+## Example server
+
+<br>
+
+When we build the server component, we include a call to **`moduleServer()`**, and assume the server will have access to the same inputs and outputs defined in the UI:
+
+<br>
+
+```{r exmaple-module-Server, eval=FALSE}
+example_module_Server <- function(id) {
+    
+  moduleServer(id = id, module = function(input, output, session) {
+      
+      # data reactive
+      data <- reactive(
+          select(
+            <data>,
+            all_of(c(input$x_variable, 
+                     input$y_variable, 
+                     input$color_variable))
+          )
+        )
+      
+      # render data()
+      output$plot <- Output({
+          data()
+      })
+      
+  })
+}
+```
+
+<br>
+
+## Example app
+
+<br>
+
+When we build the app, we know the **`id`** argument will be shared between the UI (**`example_module_UI()`**) and server (**`example_module_Server()`**)  functions:
+
+```{r example-module-app, eval=FALSE}
+ui <- fluidPage(
+  example_module_UI(id = "example")
+)
+
+server <- function(input, output, session) {
+  example_module_Server(id = "example")
+}
+
+shinyApp(ui, server)
+```
+
+<br>
+
+> ***The link between the IDs created with **`NS()`** in the **`ui`** and the **`moduleServer()`** function in the **`server`** is the **`id`**.***
+
+Modules make it easier to combine inputs and outputs into the same app without having to worry about [namespace collision](https://en.wikipedia.org/wiki/Naming_collision). 
+
+# The Plot modules 
+
+Below is the code for the plot modules (click on the **`Code`** button to see the code). 
+
+```{r plot-modules, class.source = 'fold-hide'}
+plotUI <- function(id) {
+  tagList(
+    # INPUT [x_var] ----
+    selectInput(
+      inputId =
+        NS(namespace = id, 
+           id = "x_var"),
+      label = "X column", 
+      selected = "body_mass_g",
+      choices = names(
+        select(
+          palmerpenguins::penguins, where(is.numeric)
+        )
+      )
+    ),
+    # INPUT [y_var] ----
+    selectInput(
+      inputId =
+        NS(namespace = id, 
+           id = "y_var"),
+      label = "Y column", 
+      selected = "bill_length_mm",
+      choices = names(
+        select(
+          palmerpenguins::penguins, where(is.numeric)
+        )
+      )
+    ),
+    # INPUT [color] ----
+    selectInput(
+      inputId =
+        NS(namespace = id, 
+           id = "color"),
+      label = "Color column", 
+      selected = "species",
+      choices = names(
+        select(palmerpenguins::penguins, where(is.factor))
+      )
+    ),
+    # OUTPUT [plot] ----
+    plotOutput(
+      outputId =
+        NS(namespace = id, 
+           id = "plot")
+    ),
+    # OUTPUT [plot] ----
+    verbatimTextOutput(
+      outputId =
+        NS(namespace = id, 
+           id = "value")
+    )
+  )
+}
+
+plotServer <- function(id) {
+  # create module
+  moduleServer(id = id, module = function(input, output, session) {
+    # REACTIVE [plot] -----
+    data <- reactive(
+      select(
+        palmerpenguins::penguins,
+        all_of(c(input$x_var, input$y_var, input$color))
+      )
+    )
+    # RENDER [plot] -----
+    output$plot <- renderPlot({
+      # y labels
+      y_lab <- str_replace_all(input$y_var, "_", " ")
+      # x labels
+      x_lab <- str_replace_all(input$x_var, "_", " ")
+      # graph
+      ggplot(data()) +
+        geom_point(
+          aes_string(
+            x = input$x_var,
+            y = input$y_var,
+            color = input$color
+          )
+        ) +
+        # labels 
+        labs(
+          title =
+            paste0("Histogram of ", x_lab, " and ", y_lab),
+          x = x_lab,
+          y = y_lab
+        )
+    })
+    # REACTIVE [values] -----
+    output$value <- renderPrint({
+      # these will change as inputs change!
+      values <- reactiveValuesToList(x = input, 
+                                    all.names = TRUE)
+      print(values)
+    })
+  })
+}
+```
+
+# The Data modules
+
+Below is the code for the data modules (click on the **`Code`** button to see the code). 
+
+```{r data-modules, class.source = 'fold-hide'}
+# dataUI --------------------------------------------
+dataUI <- function(id) {
+  tagList(
+    sidebarLayout(
+      sidebarPanel(
+        # INPUT [x_var] -----
+        selectInput(
+          inputId = NS(namespace = id, 
+                       id = "x_var"),
+          label = "X column", 
+          selected = "body_mass_g",
+          choices = names(palmerpenguins::penguins)
+        ),
+        # INPUT [y_var] -----
+        selectInput(
+          inputId = NS(namespace = id, 
+                       id = "y_var"),
+          label = "Y column", 
+          selected = "bill_length_mm",
+          choices = names(palmerpenguins::penguins)
+        ),
+        # INPUT [color] -----
+        selectInput(
+          inputId = NS(namespace = id, 
+                       id = "color"),
+          label = "Color column",
+          selected = "species",
+          choices = names(palmerpenguins::penguins)
+        )
+      ),
+      mainPanel(
+        # OUTPUT [table] -----
+        reactableOutput(
+          outputId =
+            NS(namespace = id, 
+               id = "table")
+        ),
+        # some space
+        br(), br(), br(),
+        # values
+        tags$strong("data ", tags$code("reactiveValues:")),
+        # OUTPUT [value] -----
+        verbatimTextOutput(
+          outputId =
+            NS(namespace = id, 
+               id = "value")
+        )
+      )
+    )
+  )
+}
+
+# dataServer ----------------------------------------
+dataServer <- function(id) {
+  moduleServer(id = id, module = function(input, output, session) {
+    # REACTIVE [data] -----
+    data <- reactive(
+      select(
+        palmerpenguins::penguins,
+        all_of(c(input$x_var, input$y_var, input$color))
+      )
+    )
+    # OUTPUT [table] -----
+    output$table <- reactable::renderReactable({
+      reactable::reactable(
+        data = data(),
+        defaultPageSize = 10,
+        resizable = TRUE,
+        highlight = TRUE,
+        height = 350,
+        wrap = FALSE,
+        bordered = TRUE,
+        searchable = TRUE,
+        filterable = TRUE
+      )
+    })
+    # OUTPUT [values] -----
+    output$value <- shiny::renderPrint({
+      all_values <- reactiveValuesToList(x = input, 
+                                         all.names = TRUE)
+      values <- all_values[str_detect(names(all_values), "reactable", TRUE)]
+      print(values)
+    })
+  })
+}
+```
+
+# Part 1) UI
+
+The UI combines both in inputs and outputs from the **`plotUI()` and **`dataUI()`. We'll create a medium black line (`mbl`) to separate the graph from the data in the display.  
+
+```{r plotdataApp-ui}
+# medium black line (mbl)
+mbl <- tagList(tags$hr(style = "border-top: 2px solid #333333;"))
+# UI ----
+ui <- fluidPage(
+        h3("Plot module"),
+            # plot UI module
+            plotUI(id = "graph"),
+        mbl, 
+        h3("Data module"),
+            # data UI module
+            dataUI(id = "data")
+)
+```
+
+
+# Part 2) Server
+
+The server combines the reactives and render functions from both the **`plotServer`** and **`dataServer`, and we make sure to use the same **`id`s we used in the UI. 
+
+```{r plotdataApp-server}
+server <- function(input, output, session) {
+    # plot server module
+        plotServer(id = "graph")
+    # data server module
+        dataServer(id = "data")
+}
+```
+
+**Note:** We might expect the **`inputId`s, reactive (`data()`), and **`outputId`s in **`plotUI()` to collide with the **`inputId`s, reactive (`data()`), and **`outputId`s in **`dataUI()`, but modules makes this possible. 
+
+
+# Part 3) `plotdataApp()`
+
+We run this application by wrapping everything in a **`plotdataApp()` function (which includes our **`shinyApp()` function):
+
+```{r plotdataApp}
+plotdataApp <- function() {
+# medium black line (mbl)
+mbl <- tagList(tags$hr(style = "border-top: 2px solid #333333;"))
+# UI ----
+ui <- fluidPage(
+        h3("Plot module"),
+            # plot UI module
+            plotUI(id = "graph"),
+        mbl, 
+        h3("Data module"),
+            # data UI module
+            dataUI(id = "data")
+)
+# SERVER ----
+  server <- function(input, output, session) {
+    # plot server module
+    plotServer(id = "graph")
+    # data server module
+    dataServer(id = "data")
+  }
+# RUN ----
+  shinyApp(ui, server,
+    options = list(height = 500, width = 600)
+  )
+}
+```
+
+# App 
+
+This application is deployed here:
+
+```{r run-plotdataApp}
+# plotdataApp()
+```
+
+# Plot reactive values
+
+We've also created a version of this application using showcase mode, which we can see [here.](https://mjfrigaard.shinyapps.io/plotdataApp-showcase/) When we change the inputs for the **Plot module**, we can see the code for the **`output$plot`** and **`output$value`** lights up:
+
+## The **`x`** values 
+
+```{r plotdataApp-plot-x-reactives, echo=FALSE, eval=TRUE}
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdataApp-plot-x-reactives.gif")
+```
+
+## The **`y`** values:
+
+```{r plotdataApp-plot-y-reactives, echo=FALSE, eval=TRUE}
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdataApp-plot-y-reactives.gif")
+```
+
+
+## The **`color`** values:
+
+```{r plotdataApp-plot-color-reactives, echo=FALSE, eval=TRUE}
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdataApp-plot-color-reactives.gif")
+```
+
+# Data reactive values
+
+Likewise, when we change the inputs for the **Data module**, we can see the reactives and render functions light up:
+
+```{r plotdataApp-plot-change-table, echo=FALSE, eval=TRUE}
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdataApp-plot-change-table.gif")
+```
+
+# Recap 
+
+This application works because the modules create separate namespaces for the inputs, reactives, and outputs:
+
+```{r namespace-png, echo=FALSE, eval=TRUE}
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/namespace.png")
+```
+
+By creating distinct namespaces with **`NS()`, we've isolated the **`inputId`'s and **`outputId`s (so the names don't collide). 
+
+Check out the files used to create this application [here](https://github.com/mjfrigaard/shinymods/tree/main/04-plotdataApp). Read more about modules in [Engineering Production-Grade Shiny Apps](https://engineering-shiny.org/structuring-project.html#using-shiny-modules) and [Mastering Shiny](https://mastering-shiny.org/scaling-modules.html).

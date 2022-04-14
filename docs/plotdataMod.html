@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Martin Frigaard" />
+
+
+<title>part 4: plotApp + dataApp = plotdataApp</title>
+
+<script src="site_libs/header-attrs-2.13/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/darkly.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<script src="site_libs/navigation-1.1/codefolding.js"></script>
+<link href="site_libs/pagedtable-1.1/css/pagedtable.css" rel="stylesheet" />
+<script src="site_libs/pagedtable-1.1/js/pagedtable.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    background-color: #2a211c;
+    color: #bdae9d;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #bdae9d;  padding-left: 4px; }
+div.sourceCode
+  { color: #bdae9d; background-color: #2a211c; }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ffff00; } /* Alert */
+code span.an { color: #0066ff; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { } /* Attribute */
+code span.bn { color: #44aa43; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #43a8ed; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #049b0a; } /* Char */
+code span.cn { } /* Constant */
+code span.co { color: #0066ff; font-weight: bold; font-style: italic; } /* Comment */
+code span.do { color: #0066ff; font-style: italic; } /* Documentation */
+code span.dt { text-decoration: underline; } /* DataType */
+code span.dv { color: #44aa43; } /* DecVal */
+code span.er { color: #ffff00; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #44aa43; } /* Float */
+code span.fu { color: #ff9358; font-weight: bold; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #0066ff; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #43a8ed; font-weight: bold; } /* Keyword */
+code span.op { } /* Operator */
+code span.pp { font-weight: bold; } /* Preprocessor */
+code span.sc { color: #049b0a; } /* SpecialChar */
+code span.ss { color: #049b0a; } /* SpecialString */
+code span.st { color: #049b0a; } /* String */
+code span.va { } /* Variable */
+code span.vs { color: #049b0a; } /* VerbatimString */
+code span.wa { color: #ffff00; font-weight: bold; } /* Warning */
+
+.sourceCode .row {
+  width: 100%;
+}
+.sourceCode {
+  overflow-x: auto;
+}
+.code-folding-btn {
+  margin-right: -30px;
+}
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.tab('show');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+<style type="text/css">
+.code-folding-btn { margin-bottom: 4px; }
+</style>
+
+
+
+<style type="text/css">
+
+#section-TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#section-TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="section-TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">fm-shiny-modules</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">modules</a>
+</li>
+<li>
+  <a href="problemApp.html">A problematic shiny app</a>
+</li>
+<li>
+  <a href="plotMod.html">A plot module</a>
+</li>
+<li>
+  <a href="dataMod.html">A data module</a>
+</li>
+<li>
+  <a href="plotdataMod.html">plot + data module</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="section-header">
+
+<div class="btn-group pull-right float-right">
+<button type="button" class="btn btn-default btn-xs btn-secondary btn-sm dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><span>Code</span> <span class="caret"></span></button>
+<ul class="dropdown-menu dropdown-menu-right" style="min-width: 50px;">
+<li><a id="rmd-show-all-code" href="#">Show All Code</a></li>
+<li><a id="rmd-hide-all-code" href="#">Hide All Code</a></li>
+</ul>
+</div>
+
+
+
+<h1 class="title toc-ignore">part 4: plotApp + dataApp =
+plotdataApp</h1>
+<h4 class="author">Martin Frigaard</h4>
+
+</div>
+
+
+<p><br></p>
+<div id="section-module-3-plotapp-dataapp-plotdatamod"
+class="section level1">
+<h1>Module 3) plotApp + dataApp = plotdataMod</h1>
+<p>So far we’ve created two modules in two separate apps:</p>
+<ol style="list-style-type: decimal">
+<li><p>An app with a graph module (<a
+href="https://mjfrigaard.shinyapps.io/plotApp/"><strong><code>plotApp</code></strong></a>)
+that displays a graph with the <a
+href="https://ggplot2.tidyverse.org/"><strong><code>ggplot2</code></strong>
+package</a>.</p></li>
+<li><p>An app with a data module (<a
+href="https://mjfrigaard.shinyapps.io/datApp/"><strong><code>dataApp</code></strong></a>)
+that displays a table with the <a
+href="https://glin.github.io/reactable/"><strong><code>reactable</code></strong>
+package</a>.</p></li>
+</ol>
+<p>In this lesson, we’re going to combine the modules in the
+<strong><code>plotApp</code></strong> and
+<strong><code>dataApp</code></strong> into a single application. But
+first, we’re going to circle back a bit and look at how the
+<strong><code>NS()</code></strong> function helps organize IDs, and how
+these IDs are accessed with
+<strong><code>moduleServer()</code></strong>.</p>
+</div>
+<div id="section-namespaces" class="section level1">
+<h1>Namespaces</h1>
+<p><br></p>
+<p>This is a quick post about namespaces in shiny modules. I’ll cover
+how the <strong><code>NS()</code></strong> function helps organize IDs
+in the UI, and how these IDs are accessed in the server with
+<strong><code>moduleServer()</code></strong>.</p>
+<p><br></p>
+<div id="section-keeping-track-of-all-those-inputidsoutputids"
+class="section level2">
+<h2>Keeping track of all those inputIds/outputIds</h2>
+<p><br></p>
+<p>As you can imagine, keeping track of all the IDs
+(<strong><code>inputId</code></strong>/<strong><code>input$</code></strong>
+and
+<strong><code>outputId</code></strong>/<strong><code>output$</code></strong>)
+becomes <a
+href="https://engineering-shiny.org/structuring-project.html#a.-your-first-shiny-module">difficult
+and time consuming</a>. It’s also hard to anticipate which names we’ll
+need in the future, or the level of precision these names require. This
+is where modules and namespaces come in handy.</p>
+<p><br></p>
+</div>
+<div id="section-what-is-a-namespace-in-a-shiny-app"
+class="section level2">
+<h2>What is a namespace in a shiny app?</h2>
+<p><br></p>
+<div id="section-a-namespace-is-to-an-id-as-a-directory-is-to-a-file"
+class="section level4">
+<h4><strong><em>“…a namespace is to an ID as a directory is to a
+file…”</em></strong></h4>
+<p><br></p>
+<p>The quote above is from the <a
+href="https://shiny.rstudio.com/reference/shiny/0.13.1/NS.html"><strong><code>NS()</code></strong>
+help files</a>, and I’ve found it’s a great way to conceptualize what
+<strong><code>NS()</code></strong> is creating.</p>
+<p>If we imagine creating two files with identical names
+(<strong><code>file.R</code></strong> and
+<strong><code>file.R</code></strong>) we quickly discover they can’t
+exist in the same directory. See what happens below when we try to
+create them in a directory named
+<strong><code>folder</code></strong>:</p>
+<div class="sourceCode" id="section-cb1"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb1-1"><a href="#section-cb1-1" aria-hidden="true" tabindex="-1"></a>fs<span class="sc">::</span><span class="fu">dir_create</span>(<span class="st">&quot;folder&quot;</span>) <span class="co"># create directory</span></span>
+<span id="section-cb1-2"><a href="#section-cb1-2" aria-hidden="true" tabindex="-1"></a>fs<span class="sc">::</span><span class="fu">file_create</span>(<span class="st">&quot;folder/file.R&quot;</span>) <span class="co"># create file 1</span></span>
+<span id="section-cb1-3"><a href="#section-cb1-3" aria-hidden="true" tabindex="-1"></a>fs<span class="sc">::</span><span class="fu">file_create</span>(<span class="st">&quot;folder/file.R&quot;</span>) <span class="co"># create file 2 (same name)</span></span>
+<span id="section-cb1-4"><a href="#section-cb1-4" aria-hidden="true" tabindex="-1"></a>fs<span class="sc">::</span><span class="fu">dir_tree</span>(<span class="st">&quot;folder&quot;</span>) <span class="co"># check files in directory</span></span></code></pre></div>
+<div class="sourceCode" id="section-cb2"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb2-1"><a href="#section-cb2-1" aria-hidden="true" tabindex="-1"></a>folder<span class="sc">/</span></span>
+<span id="section-cb2-2"><a href="#section-cb2-2" aria-hidden="true" tabindex="-1"></a>    └── file.R</span></code></pre></div>
+<p><br></p>
+<p>We can see there is only one <strong><code>file.R</code></strong> in
+the <strong><code>folder/</code></strong> directory (the second
+<strong><code>fs::file_create("folder/file.R")</code></strong> overwrote
+the first <strong><code>file.R</code></strong>). You’ve probably seen an
+error like this when trying to save two files with the same name into
+the same folder.</p>
+<p>However, we can have files with identical names in two
+<em>different</em> folders, but we have to reorganize the structure.
+Below we’ve created a parent folder
+(<strong><code>folder/</code></strong>) with two sub-folders
+(<strong><code>sub-folder-A/</code></strong> and
+<strong><code>sub-folder-B/</code></strong>), where we can place each
+file:</p>
+<div class="sourceCode" id="section-cb3"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb3-1"><a href="#section-cb3-1" aria-hidden="true" tabindex="-1"></a> folder<span class="sc">/</span></span>
+<span id="section-cb3-2"><a href="#section-cb3-2" aria-hidden="true" tabindex="-1"></a>    ├── sub<span class="sc">-</span>folder<span class="sc">-</span>A<span class="sc">/</span></span>
+<span id="section-cb3-3"><a href="#section-cb3-3" aria-hidden="true" tabindex="-1"></a>    │       └── file.R</span>
+<span id="section-cb3-4"><a href="#section-cb3-4" aria-hidden="true" tabindex="-1"></a>    └── sub<span class="sc">-</span>folder<span class="sc">-</span>B<span class="sc">/</span></span>
+<span id="section-cb3-5"><a href="#section-cb3-5" aria-hidden="true" tabindex="-1"></a>            └── file.R</span></code></pre></div>
+<p><br></p>
+<p>By placing the files in sub-directories, we’ve made the
+<strong><em>path</em></strong> to each file unique, which makes it
+possible for them to have identical names. We can access these files
+using their <strong><em>unique path</em></strong> (not their unique
+name). The <strong><code>NS()</code></strong> function works in a
+similar way by creating a unique ‘<strong><em>path</em></strong>’ for
+each ID the module.</p>
+<p><br></p>
+</div>
+<div id="section-using-ns" class="section level3">
+<h3>Using <strong><code>NS()</code></strong></h3>
+<p><br></p>
+<p>Sometimes you’ll see <strong><code>NS()</code></strong> used to
+create a separate <strong><code>ns()</code></strong> function, which is
+then used to define IDs in the module
+(i.e. <strong><code>ns &lt;- shiny::NS(id)</code></strong> then
+<strong><code>ns("[name]"))</code></strong>:</p>
+<div class="sourceCode" id="section-cb4"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb4-1"><a href="#section-cb4-1" aria-hidden="true" tabindex="-1"></a>text_example_01_UI <span class="ot">&lt;-</span> <span class="cf">function</span>(id) {</span>
+<span id="section-cb4-2"><a href="#section-cb4-2" aria-hidden="true" tabindex="-1"></a>  ns <span class="ot">&lt;-</span> shiny<span class="sc">::</span><span class="fu">NS</span>(id)</span>
+<span id="section-cb4-3"><a href="#section-cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tagList</span>(</span>
+<span id="section-cb4-4"><a href="#section-cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">textAreaInput</span>(<span class="at">inputId =</span> <span class="fu">ns</span>(<span class="st">&quot;text_in&quot;</span>), </span>
+<span id="section-cb4-5"><a href="#section-cb4-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">label =</span> <span class="st">&quot;Text&quot;</span>),</span>
+<span id="section-cb4-6"><a href="#section-cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">verbatimTextOutput</span>(<span class="fu">ns</span>(<span class="st">&quot;text_out&quot;</span>))</span>
+<span id="section-cb4-7"><a href="#section-cb4-7" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="section-cb4-8"><a href="#section-cb4-8" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="section-cb4-9"><a href="#section-cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">text_example_01_UI</span>(<span class="at">id =</span> <span class="st">&quot;text&quot;</span>)</span></code></pre></div>
+<div class="form-group shiny-input-container">
+<label class="control-label" id="text-text_in-label" for="text-text_in">Text</label>
+<textarea id="text-text_in" class="form-control"></textarea>
+</div>
+<pre class="shiny-text-output noplaceholder" id="text-text_out"></pre>
+<p><br></p>
+<p>Other times you’ll see it written explicitly (with
+<strong><code>NS(namespace = id, id = "[name]")</code></strong>).</p>
+<div class="sourceCode" id="section-cb5"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb5-1"><a href="#section-cb5-1" aria-hidden="true" tabindex="-1"></a>text_example_02_UI <span class="ot">&lt;-</span> <span class="cf">function</span>(id) {</span>
+<span id="section-cb5-2"><a href="#section-cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tagList</span>(</span>
+<span id="section-cb5-3"><a href="#section-cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">textAreaInput</span>(<span class="at">inputId =</span> <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb5-4"><a href="#section-cb5-4" aria-hidden="true" tabindex="-1"></a>                               <span class="at">id =</span> <span class="st">&quot;text_in&quot;</span>), </span>
+<span id="section-cb5-5"><a href="#section-cb5-5" aria-hidden="true" tabindex="-1"></a>                  <span class="at">label =</span> <span class="st">&quot;Text&quot;</span>),</span>
+<span id="section-cb5-6"><a href="#section-cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">verbatimTextOutput</span>(<span class="at">outputId =</span> <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb5-7"><a href="#section-cb5-7" aria-hidden="true" tabindex="-1"></a>                               <span class="at">id =</span> <span class="st">&quot;text_out&quot;</span>))</span>
+<span id="section-cb5-8"><a href="#section-cb5-8" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="section-cb5-9"><a href="#section-cb5-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="section-cb5-10"><a href="#section-cb5-10" aria-hidden="true" tabindex="-1"></a><span class="fu">text_example_02_UI</span>(<span class="at">id =</span> <span class="st">&quot;text&quot;</span>)</span></code></pre></div>
+<p><br></p>
+<p>As you can see, both methods work. This is because “<em>if
+<strong><code>id</code></strong> is missing,
+[<strong><code>NS()</code></strong>] returns a function that expects an
+<strong><code>id</code></strong> string as its only argument and returns
+that <strong><code>id</code></strong> with the namespace
+prepended.</em>”</p>
+<p>To see what the unique ‘location’ for a namespaced ID looks like, we
+can define our namespace in a string (“text”), then create a new object
+from <strong><code>NS()</code></strong>
+(<strong><code>name_Spaceded()</code></strong>) and examine it’s
+contents:</p>
+<div class="sourceCode" id="section-cb6"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb6-1"><a href="#section-cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># define a namespace</span></span>
+<span id="section-cb6-2"><a href="#section-cb6-2" aria-hidden="true" tabindex="-1"></a>id <span class="ot">&lt;-</span> <span class="st">&quot;text&quot;</span></span>
+<span id="section-cb6-3"><a href="#section-cb6-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create the function</span></span>
+<span id="section-cb6-4"><a href="#section-cb6-4" aria-hidden="true" tabindex="-1"></a>name_Spaceded <span class="ot">&lt;-</span> <span class="fu">NS</span>(<span class="at">namespace =</span> id)</span>
+<span id="section-cb6-5"><a href="#section-cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># view the contents</span></span>
+<span id="section-cb6-6"><a href="#section-cb6-6" aria-hidden="true" tabindex="-1"></a>name_Spaceded</span></code></pre></div>
+<p>As we can see, the function created by
+<strong><code>NS()</code></strong> is pasting together two strings: the
+<strong><code>ns_prefix</code></strong> (the namespace prefix) and the
+<strong><code>id</code></strong>.</p>
+<p>So if we supply an empty <strong><code>id</code></strong> to
+<strong><code>name_Spaceded()</code></strong></p>
+<div class="sourceCode" id="section-cb7"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb7-1"><a href="#section-cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># empty id</span></span>
+<span id="section-cb7-2"><a href="#section-cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name_Spaceded</span>(<span class="at">id =</span> <span class="st">&quot;&quot;</span>)</span></code></pre></div>
+<p>We can see the first <strong><code>id</code></strong> we passed was
+the name for the namespace. When we supply a character string to
+<strong><code>name_Spaceded()</code></strong> (imitating an
+<strong><code>inputId</code></strong> or
+<strong><code>outputId</code></strong>)…</p>
+<div class="sourceCode" id="section-cb8"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb8-1"><a href="#section-cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># &quot;namespace&quot; the id</span></span>
+<span id="section-cb8-2"><a href="#section-cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name_Spaceded</span>(<span class="st">&quot;text_in&quot;</span>)</span></code></pre></div>
+<p><strong><code>name_Spaceded()</code></strong> has replaced what would
+be <strong><code>input$text_in</code></strong>–shared globally across
+our entire application–with <strong><code>input$text_in</code></strong>,
+which is isolated in the <strong><code>text</code></strong> module.</p>
+<p><br></p>
+</div>
+</div>
+<div id="section-module-directory-structure" class="section level2">
+<h2>Module ‘directory’ structure</h2>
+<p><br></p>
+<p>Just like we can’t have identical file names in the same folder, we
+can’t have two IDs with the same name in the same app. To get around
+this, we create modules by pairing <strong><code>NS()</code></strong>
+with <strong><code>moduleServer()</code></strong>:</p>
+<ul>
+<li><p>In the UI module, <strong><code>NS()</code></strong> isolates the
+IDs into a namespace (pasting together
+<strong><code>ns_prefix</code></strong> and
+<strong><code>id</code></strong>), which we can access via
+<strong><code>moduleServer()</code></strong>.</p></li>
+<li><p>In the server module, the
+<strong><code>moduleServer()</code></strong> function includes both
+<strong><code>id</code></strong> and
+<strong><code>module</code></strong> arguments. The
+<strong><code>id</code></strong> will be linked to it’s complimentary UI
+function, and <strong><code>module</code></strong> is defined just like
+the standard shiny <strong><code>server</code></strong> function
+(<strong><code>function(input, output, session)</code></strong>). There
+is also a <strong><code>session</code></strong> argument, but it’s
+almost always set to the default value.</p></li>
+</ul>
+<p>Below is an application folder-tree that mimics how IDs are contained
+within two module’s namespaces:</p>
+<p><br></p>
+<div class="sourceCode" id="section-cb9"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb9-1"><a href="#section-cb9-1" aria-hidden="true" tabindex="-1"></a>  app<span class="sc">/</span></span>
+<span id="section-cb9-2"><a href="#section-cb9-2" aria-hidden="true" tabindex="-1"></a>    ├── module<span class="sc">-</span>plot<span class="sc">/</span> <span class="co"># plot module namespace </span></span>
+<span id="section-cb9-3"><a href="#section-cb9-3" aria-hidden="true" tabindex="-1"></a>    │       ├── UI<span class="sc">-</span>inputId<span class="ot">=</span><span class="fu">NS</span>(<span class="at">namespace =</span> id, <span class="at">id =</span> <span class="st">&quot;x_variable&quot;</span>)</span>
+<span id="section-cb9-4"><a href="#section-cb9-4" aria-hidden="true" tabindex="-1"></a>    │       ├── UI<span class="sc">-</span>inputId<span class="ot">=</span><span class="fu">NS</span>(<span class="at">namespace =</span> id, <span class="at">id =</span> <span class="st">&quot;y_variable&quot;</span>)</span>
+<span id="section-cb9-5"><a href="#section-cb9-5" aria-hidden="true" tabindex="-1"></a>    │       ├── UI<span class="sc">-</span>inputId<span class="ot">=</span><span class="fu">NS</span>(<span class="at">namespace =</span> id, <span class="at">id =</span> <span class="st">&quot;color_variable&quot;</span>)</span>
+<span id="section-cb9-6"><a href="#section-cb9-6" aria-hidden="true" tabindex="-1"></a>    │       ├── UI<span class="sc">-</span>outputId<span class="ot">=</span><span class="fu">NS</span>(<span class="at">namespace =</span> id, <span class="at">id =</span> <span class="st">&quot;plot&quot;</span>)</span>
+<span id="section-cb9-7"><a href="#section-cb9-7" aria-hidden="true" tabindex="-1"></a>    │       └── server<span class="sc">-</span><span class="fu">moduleServer</span>(<span class="at">id =</span> id)</span>
+<span id="section-cb9-8"><a href="#section-cb9-8" aria-hidden="true" tabindex="-1"></a>    └── module<span class="sc">-</span>data<span class="sc">/</span> <span class="co"># data module namespace </span></span>
+<span id="section-cb9-9"><a href="#section-cb9-9" aria-hidden="true" tabindex="-1"></a>            ├── UI<span class="sc">-</span>inputId<span class="ot">=</span><span class="fu">NS</span>(<span class="at">namespace =</span> id, <span class="at">id =</span> <span class="st">&quot;x_variable&quot;</span>)</span>
+<span id="section-cb9-10"><a href="#section-cb9-10" aria-hidden="true" tabindex="-1"></a>            ├── UI<span class="sc">-</span>inputId<span class="ot">=</span><span class="fu">NS</span>(<span class="at">namespace =</span> id, <span class="at">id =</span> <span class="st">&quot;y_variable&quot;</span>)</span>
+<span id="section-cb9-11"><a href="#section-cb9-11" aria-hidden="true" tabindex="-1"></a>            ├── UI<span class="sc">-</span>inputId<span class="ot">=</span><span class="fu">NS</span>(<span class="at">namespace =</span> id, <span class="at">id =</span> <span class="st">&quot;color_variable&quot;</span>)</span>
+<span id="section-cb9-12"><a href="#section-cb9-12" aria-hidden="true" tabindex="-1"></a>            ├── UI<span class="sc">-</span>outputId<span class="ot">=</span><span class="fu">NS</span>(<span class="at">namespace =</span> id, <span class="at">id =</span> <span class="st">&quot;table&quot;</span>)</span>
+<span id="section-cb9-13"><a href="#section-cb9-13" aria-hidden="true" tabindex="-1"></a>            └── server<span class="sc">-</span><span class="fu">moduleServer</span>(<span class="at">id =</span> id)</span></code></pre></div>
+<p><br></p>
+<ol style="list-style-type: decimal">
+<li><p>Within our <strong><code>app/</code></strong> directory, we have
+two modules (<strong><code>module-plot/</code></strong> and
+<strong><code>module-data/</code></strong>).</p></li>
+<li><p>Each module has a list of IDs
+(<strong><code>inputId</code></strong>/<strong><code>outputId</code></strong>),
+which must be unique within the module’s namespace (but they no longer
+have to be unique within the app)</p></li>
+<li><p>We use the <strong><code>NS()</code></strong> function to isolate
+and name the IDs into a namespace
+(i.e. <strong><code>id = "[name]"</code></strong>), then we access these
+IDs in the server with <strong><code>moduleServer()</code></strong>
+(which we will cover below).</p></li>
+</ol>
+<p><br></p>
+</div>
+<div id="section-example-ui" class="section level2">
+<h2>Example UI</h2>
+<p><br></p>
+<p>Below is an example UI function for a module with input and output
+functions and their IDs (<strong><code>input$x_variable</code></strong>,
+<strong><code>input$y_variable</code></strong>, and
+<strong><code>output$plot</code></strong>).</p>
+<div class="sourceCode" id="section-cb10"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb10-1"><a href="#section-cb10-1" aria-hidden="true" tabindex="-1"></a>example_module_UI <span class="ot">&lt;-</span> <span class="cf">function</span>(id) {</span>
+<span id="section-cb10-2"><a href="#section-cb10-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">tagList</span>(</span>
+<span id="section-cb10-3"><a href="#section-cb10-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># input</span></span>
+<span id="section-cb10-4"><a href="#section-cb10-4" aria-hidden="true" tabindex="-1"></a>        <span class="fu">selectInput</span>(</span>
+<span id="section-cb10-5"><a href="#section-cb10-5" aria-hidden="true" tabindex="-1"></a>            <span class="at">inputId =</span> <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb10-6"><a href="#section-cb10-6" aria-hidden="true" tabindex="-1"></a>                         <span class="at">id =</span> <span class="st">&quot;x_variable&quot;</span>)</span>
+<span id="section-cb10-7"><a href="#section-cb10-7" aria-hidden="true" tabindex="-1"></a>            <span class="co"># ...additional arguments omitted...</span></span>
+<span id="section-cb10-8"><a href="#section-cb10-8" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="section-cb10-9"><a href="#section-cb10-9" aria-hidden="true" tabindex="-1"></a>        <span class="co"># input</span></span>
+<span id="section-cb10-10"><a href="#section-cb10-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">selectInput</span>(</span>
+<span id="section-cb10-11"><a href="#section-cb10-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">inputId =</span> <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb10-12"><a href="#section-cb10-12" aria-hidden="true" tabindex="-1"></a>                         <span class="at">id =</span> <span class="st">&quot;y_variable&quot;</span>)</span>
+<span id="section-cb10-13"><a href="#section-cb10-13" aria-hidden="true" tabindex="-1"></a>            <span class="co"># ...additional arguments omitted...</span></span>
+<span id="section-cb10-14"><a href="#section-cb10-14" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="section-cb10-15"><a href="#section-cb10-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># input</span></span>
+<span id="section-cb10-16"><a href="#section-cb10-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">selectInput</span>(</span>
+<span id="section-cb10-17"><a href="#section-cb10-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">inputId =</span> <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb10-18"><a href="#section-cb10-18" aria-hidden="true" tabindex="-1"></a>                         <span class="at">id =</span> <span class="st">&quot;color_variable&quot;</span>)</span>
+<span id="section-cb10-19"><a href="#section-cb10-19" aria-hidden="true" tabindex="-1"></a>            <span class="co"># ...additional arguments omitted...</span></span>
+<span id="section-cb10-20"><a href="#section-cb10-20" aria-hidden="true" tabindex="-1"></a>            ),</span>
+<span id="section-cb10-21"><a href="#section-cb10-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># output</span></span>
+<span id="section-cb10-22"><a href="#section-cb10-22" aria-hidden="true" tabindex="-1"></a>        <span class="fu">plotOutput</span>(</span>
+<span id="section-cb10-23"><a href="#section-cb10-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">outputId =</span> <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb10-24"><a href="#section-cb10-24" aria-hidden="true" tabindex="-1"></a>                         <span class="at">id =</span> <span class="st">&quot;plot&quot;</span>))</span>
+<span id="section-cb10-25"><a href="#section-cb10-25" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="section-cb10-26"><a href="#section-cb10-26" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><br></p>
+</div>
+<div id="section-example-server" class="section level2">
+<h2>Example server</h2>
+<p><br></p>
+<p>When we build the server component, we include a call to
+<strong><code>moduleServer()</code></strong>, and assume the server will
+have access to the same inputs and outputs defined in the UI:</p>
+<p><br></p>
+<div class="sourceCode" id="section-cb11"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb11-1"><a href="#section-cb11-1" aria-hidden="true" tabindex="-1"></a>example_module_Server <span class="ot">&lt;-</span> <span class="cf">function</span>(id) {</span>
+<span id="section-cb11-2"><a href="#section-cb11-2" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="section-cb11-3"><a href="#section-cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">moduleServer</span>(<span class="at">id =</span> id, <span class="at">module =</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="section-cb11-4"><a href="#section-cb11-4" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="section-cb11-5"><a href="#section-cb11-5" aria-hidden="true" tabindex="-1"></a>      <span class="co"># data reactive</span></span>
+<span id="section-cb11-6"><a href="#section-cb11-6" aria-hidden="true" tabindex="-1"></a>      data <span class="ot">&lt;-</span> <span class="fu">reactive</span>(</span>
+<span id="section-cb11-7"><a href="#section-cb11-7" aria-hidden="true" tabindex="-1"></a>          <span class="fu">select</span>(</span>
+<span id="section-cb11-8"><a href="#section-cb11-8" aria-hidden="true" tabindex="-1"></a>            <span class="sc">&lt;</span>data<span class="sc">&gt;</span>,</span>
+<span id="section-cb11-9"><a href="#section-cb11-9" aria-hidden="true" tabindex="-1"></a>            <span class="fu">all_of</span>(<span class="fu">c</span>(input<span class="sc">$</span>x_variable, </span>
+<span id="section-cb11-10"><a href="#section-cb11-10" aria-hidden="true" tabindex="-1"></a>                     input<span class="sc">$</span>y_variable, </span>
+<span id="section-cb11-11"><a href="#section-cb11-11" aria-hidden="true" tabindex="-1"></a>                     input<span class="sc">$</span>color_variable))</span>
+<span id="section-cb11-12"><a href="#section-cb11-12" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="section-cb11-13"><a href="#section-cb11-13" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="section-cb11-14"><a href="#section-cb11-14" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="section-cb11-15"><a href="#section-cb11-15" aria-hidden="true" tabindex="-1"></a>      <span class="co"># render data()</span></span>
+<span id="section-cb11-16"><a href="#section-cb11-16" aria-hidden="true" tabindex="-1"></a>      output<span class="sc">$</span>plot <span class="ot">&lt;-</span> <span class="fu">Output</span>({</span>
+<span id="section-cb11-17"><a href="#section-cb11-17" aria-hidden="true" tabindex="-1"></a>          <span class="fu">data</span>()</span>
+<span id="section-cb11-18"><a href="#section-cb11-18" aria-hidden="true" tabindex="-1"></a>      })</span>
+<span id="section-cb11-19"><a href="#section-cb11-19" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="section-cb11-20"><a href="#section-cb11-20" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="section-cb11-21"><a href="#section-cb11-21" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><br></p>
+</div>
+<div id="section-example-app" class="section level2">
+<h2>Example app</h2>
+<p><br></p>
+<p>When we build the app, we know the <strong><code>id</code></strong>
+argument will be shared between the UI
+(<strong><code>example_module_UI()</code></strong>) and server
+(<strong><code>example_module_Server()</code></strong>) functions:</p>
+<div class="sourceCode" id="section-cb12"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb12-1"><a href="#section-cb12-1" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">fluidPage</span>(</span>
+<span id="section-cb12-2"><a href="#section-cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">example_module_UI</span>(<span class="at">id =</span> <span class="st">&quot;example&quot;</span>)</span>
+<span id="section-cb12-3"><a href="#section-cb12-3" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="section-cb12-4"><a href="#section-cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="section-cb12-5"><a href="#section-cb12-5" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="section-cb12-6"><a href="#section-cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">example_module_Server</span>(<span class="at">id =</span> <span class="st">&quot;example&quot;</span>)</span>
+<span id="section-cb12-7"><a href="#section-cb12-7" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="section-cb12-8"><a href="#section-cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="section-cb12-9"><a href="#section-cb12-9" aria-hidden="true" tabindex="-1"></a><span class="fu">shinyApp</span>(ui, server)</span></code></pre></div>
+<p><br></p>
+<blockquote>
+<p><em><strong>The link between the IDs created with
+</strong><code>NS()</code><strong> in the
+</strong><code>ui</code><strong> and the
+</strong><code>moduleServer()</code><strong> function in the
+</strong><code>server</code><strong> is the
+</strong><code>id</code><strong>.</strong></em></p>
+</blockquote>
+<p>Modules make it easier to combine inputs and outputs into the same
+app without having to worry about <a
+href="https://en.wikipedia.org/wiki/Naming_collision">namespace
+collision</a>.</p>
+</div>
+</div>
+<div id="section-the-plot-modules" class="section level1">
+<h1>The Plot modules</h1>
+<p>Below is the code for the plot modules (click on the
+<strong><code>Code</code></strong> button to see the code).</p>
+<div class="sourceCode" id="section-cb13"><pre
+class="sourceCode r fold-hide"><code class="sourceCode r"><span id="section-cb13-1"><a href="#section-cb13-1" aria-hidden="true" tabindex="-1"></a>plotUI <span class="ot">&lt;-</span> <span class="cf">function</span>(id) {</span>
+<span id="section-cb13-2"><a href="#section-cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tagList</span>(</span>
+<span id="section-cb13-3"><a href="#section-cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># INPUT [x_var] ----</span></span>
+<span id="section-cb13-4"><a href="#section-cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">selectInput</span>(</span>
+<span id="section-cb13-5"><a href="#section-cb13-5" aria-hidden="true" tabindex="-1"></a>      <span class="at">inputId =</span></span>
+<span id="section-cb13-6"><a href="#section-cb13-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb13-7"><a href="#section-cb13-7" aria-hidden="true" tabindex="-1"></a>           <span class="at">id =</span> <span class="st">&quot;x_var&quot;</span>),</span>
+<span id="section-cb13-8"><a href="#section-cb13-8" aria-hidden="true" tabindex="-1"></a>      <span class="at">label =</span> <span class="st">&quot;X column&quot;</span>, </span>
+<span id="section-cb13-9"><a href="#section-cb13-9" aria-hidden="true" tabindex="-1"></a>      <span class="at">selected =</span> <span class="st">&quot;body_mass_g&quot;</span>,</span>
+<span id="section-cb13-10"><a href="#section-cb13-10" aria-hidden="true" tabindex="-1"></a>      <span class="at">choices =</span> <span class="fu">names</span>(</span>
+<span id="section-cb13-11"><a href="#section-cb13-11" aria-hidden="true" tabindex="-1"></a>        <span class="fu">select</span>(</span>
+<span id="section-cb13-12"><a href="#section-cb13-12" aria-hidden="true" tabindex="-1"></a>          palmerpenguins<span class="sc">::</span>penguins, <span class="fu">where</span>(is.numeric)</span>
+<span id="section-cb13-13"><a href="#section-cb13-13" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="section-cb13-14"><a href="#section-cb13-14" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="section-cb13-15"><a href="#section-cb13-15" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="section-cb13-16"><a href="#section-cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># INPUT [y_var] ----</span></span>
+<span id="section-cb13-17"><a href="#section-cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">selectInput</span>(</span>
+<span id="section-cb13-18"><a href="#section-cb13-18" aria-hidden="true" tabindex="-1"></a>      <span class="at">inputId =</span></span>
+<span id="section-cb13-19"><a href="#section-cb13-19" aria-hidden="true" tabindex="-1"></a>        <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb13-20"><a href="#section-cb13-20" aria-hidden="true" tabindex="-1"></a>           <span class="at">id =</span> <span class="st">&quot;y_var&quot;</span>),</span>
+<span id="section-cb13-21"><a href="#section-cb13-21" aria-hidden="true" tabindex="-1"></a>      <span class="at">label =</span> <span class="st">&quot;Y column&quot;</span>, </span>
+<span id="section-cb13-22"><a href="#section-cb13-22" aria-hidden="true" tabindex="-1"></a>      <span class="at">selected =</span> <span class="st">&quot;bill_length_mm&quot;</span>,</span>
+<span id="section-cb13-23"><a href="#section-cb13-23" aria-hidden="true" tabindex="-1"></a>      <span class="at">choices =</span> <span class="fu">names</span>(</span>
+<span id="section-cb13-24"><a href="#section-cb13-24" aria-hidden="true" tabindex="-1"></a>        <span class="fu">select</span>(</span>
+<span id="section-cb13-25"><a href="#section-cb13-25" aria-hidden="true" tabindex="-1"></a>          palmerpenguins<span class="sc">::</span>penguins, <span class="fu">where</span>(is.numeric)</span>
+<span id="section-cb13-26"><a href="#section-cb13-26" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="section-cb13-27"><a href="#section-cb13-27" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="section-cb13-28"><a href="#section-cb13-28" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="section-cb13-29"><a href="#section-cb13-29" aria-hidden="true" tabindex="-1"></a>    <span class="co"># INPUT [color] ----</span></span>
+<span id="section-cb13-30"><a href="#section-cb13-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">selectInput</span>(</span>
+<span id="section-cb13-31"><a href="#section-cb13-31" aria-hidden="true" tabindex="-1"></a>      <span class="at">inputId =</span></span>
+<span id="section-cb13-32"><a href="#section-cb13-32" aria-hidden="true" tabindex="-1"></a>        <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb13-33"><a href="#section-cb13-33" aria-hidden="true" tabindex="-1"></a>           <span class="at">id =</span> <span class="st">&quot;color&quot;</span>),</span>
+<span id="section-cb13-34"><a href="#section-cb13-34" aria-hidden="true" tabindex="-1"></a>      <span class="at">label =</span> <span class="st">&quot;Color column&quot;</span>, </span>
+<span id="section-cb13-35"><a href="#section-cb13-35" aria-hidden="true" tabindex="-1"></a>      <span class="at">selected =</span> <span class="st">&quot;species&quot;</span>,</span>
+<span id="section-cb13-36"><a href="#section-cb13-36" aria-hidden="true" tabindex="-1"></a>      <span class="at">choices =</span> <span class="fu">names</span>(</span>
+<span id="section-cb13-37"><a href="#section-cb13-37" aria-hidden="true" tabindex="-1"></a>        <span class="fu">select</span>(palmerpenguins<span class="sc">::</span>penguins, <span class="fu">where</span>(is.factor))</span>
+<span id="section-cb13-38"><a href="#section-cb13-38" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="section-cb13-39"><a href="#section-cb13-39" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="section-cb13-40"><a href="#section-cb13-40" aria-hidden="true" tabindex="-1"></a>    <span class="co"># OUTPUT [plot] ----</span></span>
+<span id="section-cb13-41"><a href="#section-cb13-41" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotOutput</span>(</span>
+<span id="section-cb13-42"><a href="#section-cb13-42" aria-hidden="true" tabindex="-1"></a>      <span class="at">outputId =</span></span>
+<span id="section-cb13-43"><a href="#section-cb13-43" aria-hidden="true" tabindex="-1"></a>        <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb13-44"><a href="#section-cb13-44" aria-hidden="true" tabindex="-1"></a>           <span class="at">id =</span> <span class="st">&quot;plot&quot;</span>)</span>
+<span id="section-cb13-45"><a href="#section-cb13-45" aria-hidden="true" tabindex="-1"></a>    ),</span>
+<span id="section-cb13-46"><a href="#section-cb13-46" aria-hidden="true" tabindex="-1"></a>    <span class="co"># OUTPUT [plot] ----</span></span>
+<span id="section-cb13-47"><a href="#section-cb13-47" aria-hidden="true" tabindex="-1"></a>    <span class="fu">verbatimTextOutput</span>(</span>
+<span id="section-cb13-48"><a href="#section-cb13-48" aria-hidden="true" tabindex="-1"></a>      <span class="at">outputId =</span></span>
+<span id="section-cb13-49"><a href="#section-cb13-49" aria-hidden="true" tabindex="-1"></a>        <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb13-50"><a href="#section-cb13-50" aria-hidden="true" tabindex="-1"></a>           <span class="at">id =</span> <span class="st">&quot;value&quot;</span>)</span>
+<span id="section-cb13-51"><a href="#section-cb13-51" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="section-cb13-52"><a href="#section-cb13-52" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="section-cb13-53"><a href="#section-cb13-53" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="section-cb13-54"><a href="#section-cb13-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="section-cb13-55"><a href="#section-cb13-55" aria-hidden="true" tabindex="-1"></a>plotServer <span class="ot">&lt;-</span> <span class="cf">function</span>(id) {</span>
+<span id="section-cb13-56"><a href="#section-cb13-56" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create module</span></span>
+<span id="section-cb13-57"><a href="#section-cb13-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">moduleServer</span>(<span class="at">id =</span> id, <span class="at">module =</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="section-cb13-58"><a href="#section-cb13-58" aria-hidden="true" tabindex="-1"></a>    <span class="co"># REACTIVE [plot] -----</span></span>
+<span id="section-cb13-59"><a href="#section-cb13-59" aria-hidden="true" tabindex="-1"></a>    data <span class="ot">&lt;-</span> <span class="fu">reactive</span>(</span>
+<span id="section-cb13-60"><a href="#section-cb13-60" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(</span>
+<span id="section-cb13-61"><a href="#section-cb13-61" aria-hidden="true" tabindex="-1"></a>        palmerpenguins<span class="sc">::</span>penguins,</span>
+<span id="section-cb13-62"><a href="#section-cb13-62" aria-hidden="true" tabindex="-1"></a>        <span class="fu">all_of</span>(<span class="fu">c</span>(input<span class="sc">$</span>x_var, input<span class="sc">$</span>y_var, input<span class="sc">$</span>color))</span>
+<span id="section-cb13-63"><a href="#section-cb13-63" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="section-cb13-64"><a href="#section-cb13-64" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="section-cb13-65"><a href="#section-cb13-65" aria-hidden="true" tabindex="-1"></a>    <span class="co"># RENDER [plot] -----</span></span>
+<span id="section-cb13-66"><a href="#section-cb13-66" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>plot <span class="ot">&lt;-</span> <span class="fu">renderPlot</span>({</span>
+<span id="section-cb13-67"><a href="#section-cb13-67" aria-hidden="true" tabindex="-1"></a>      <span class="co"># y labels</span></span>
+<span id="section-cb13-68"><a href="#section-cb13-68" aria-hidden="true" tabindex="-1"></a>      y_lab <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(input<span class="sc">$</span>y_var, <span class="st">&quot;_&quot;</span>, <span class="st">&quot; &quot;</span>)</span>
+<span id="section-cb13-69"><a href="#section-cb13-69" aria-hidden="true" tabindex="-1"></a>      <span class="co"># x labels</span></span>
+<span id="section-cb13-70"><a href="#section-cb13-70" aria-hidden="true" tabindex="-1"></a>      x_lab <span class="ot">&lt;-</span> <span class="fu">str_replace_all</span>(input<span class="sc">$</span>x_var, <span class="st">&quot;_&quot;</span>, <span class="st">&quot; &quot;</span>)</span>
+<span id="section-cb13-71"><a href="#section-cb13-71" aria-hidden="true" tabindex="-1"></a>      <span class="co"># graph</span></span>
+<span id="section-cb13-72"><a href="#section-cb13-72" aria-hidden="true" tabindex="-1"></a>      <span class="fu">ggplot</span>(<span class="fu">data</span>()) <span class="sc">+</span></span>
+<span id="section-cb13-73"><a href="#section-cb13-73" aria-hidden="true" tabindex="-1"></a>        <span class="fu">geom_point</span>(</span>
+<span id="section-cb13-74"><a href="#section-cb13-74" aria-hidden="true" tabindex="-1"></a>          <span class="fu">aes_string</span>(</span>
+<span id="section-cb13-75"><a href="#section-cb13-75" aria-hidden="true" tabindex="-1"></a>            <span class="at">x =</span> input<span class="sc">$</span>x_var,</span>
+<span id="section-cb13-76"><a href="#section-cb13-76" aria-hidden="true" tabindex="-1"></a>            <span class="at">y =</span> input<span class="sc">$</span>y_var,</span>
+<span id="section-cb13-77"><a href="#section-cb13-77" aria-hidden="true" tabindex="-1"></a>            <span class="at">color =</span> input<span class="sc">$</span>color</span>
+<span id="section-cb13-78"><a href="#section-cb13-78" aria-hidden="true" tabindex="-1"></a>          )</span>
+<span id="section-cb13-79"><a href="#section-cb13-79" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">+</span></span>
+<span id="section-cb13-80"><a href="#section-cb13-80" aria-hidden="true" tabindex="-1"></a>        <span class="co"># labels </span></span>
+<span id="section-cb13-81"><a href="#section-cb13-81" aria-hidden="true" tabindex="-1"></a>        <span class="fu">labs</span>(</span>
+<span id="section-cb13-82"><a href="#section-cb13-82" aria-hidden="true" tabindex="-1"></a>          <span class="at">title =</span></span>
+<span id="section-cb13-83"><a href="#section-cb13-83" aria-hidden="true" tabindex="-1"></a>            <span class="fu">paste0</span>(<span class="st">&quot;Histogram of &quot;</span>, x_lab, <span class="st">&quot; and &quot;</span>, y_lab),</span>
+<span id="section-cb13-84"><a href="#section-cb13-84" aria-hidden="true" tabindex="-1"></a>          <span class="at">x =</span> x_lab,</span>
+<span id="section-cb13-85"><a href="#section-cb13-85" aria-hidden="true" tabindex="-1"></a>          <span class="at">y =</span> y_lab</span>
+<span id="section-cb13-86"><a href="#section-cb13-86" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="section-cb13-87"><a href="#section-cb13-87" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="section-cb13-88"><a href="#section-cb13-88" aria-hidden="true" tabindex="-1"></a>    <span class="co"># REACTIVE [values] -----</span></span>
+<span id="section-cb13-89"><a href="#section-cb13-89" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>value <span class="ot">&lt;-</span> <span class="fu">renderPrint</span>({</span>
+<span id="section-cb13-90"><a href="#section-cb13-90" aria-hidden="true" tabindex="-1"></a>      <span class="co"># these will change as inputs change!</span></span>
+<span id="section-cb13-91"><a href="#section-cb13-91" aria-hidden="true" tabindex="-1"></a>      values <span class="ot">&lt;-</span> <span class="fu">reactiveValuesToList</span>(<span class="at">x =</span> input, </span>
+<span id="section-cb13-92"><a href="#section-cb13-92" aria-hidden="true" tabindex="-1"></a>                                    <span class="at">all.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="section-cb13-93"><a href="#section-cb13-93" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(values)</span>
+<span id="section-cb13-94"><a href="#section-cb13-94" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="section-cb13-95"><a href="#section-cb13-95" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="section-cb13-96"><a href="#section-cb13-96" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="section-the-data-modules" class="section level1">
+<h1>The Data modules</h1>
+<p>Below is the code for the data modules (click on the
+<strong><code>Code</code></strong> button to see the code).</p>
+<div class="sourceCode" id="section-cb14"><pre
+class="sourceCode r fold-hide"><code class="sourceCode r"><span id="section-cb14-1"><a href="#section-cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dataUI --------------------------------------------</span></span>
+<span id="section-cb14-2"><a href="#section-cb14-2" aria-hidden="true" tabindex="-1"></a>dataUI <span class="ot">&lt;-</span> <span class="cf">function</span>(id) {</span>
+<span id="section-cb14-3"><a href="#section-cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tagList</span>(</span>
+<span id="section-cb14-4"><a href="#section-cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">sidebarLayout</span>(</span>
+<span id="section-cb14-5"><a href="#section-cb14-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">sidebarPanel</span>(</span>
+<span id="section-cb14-6"><a href="#section-cb14-6" aria-hidden="true" tabindex="-1"></a>        <span class="co"># INPUT [x_var] -----</span></span>
+<span id="section-cb14-7"><a href="#section-cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">selectInput</span>(</span>
+<span id="section-cb14-8"><a href="#section-cb14-8" aria-hidden="true" tabindex="-1"></a>          <span class="at">inputId =</span> <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb14-9"><a href="#section-cb14-9" aria-hidden="true" tabindex="-1"></a>                       <span class="at">id =</span> <span class="st">&quot;x_var&quot;</span>),</span>
+<span id="section-cb14-10"><a href="#section-cb14-10" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> <span class="st">&quot;X column&quot;</span>, </span>
+<span id="section-cb14-11"><a href="#section-cb14-11" aria-hidden="true" tabindex="-1"></a>          <span class="at">selected =</span> <span class="st">&quot;body_mass_g&quot;</span>,</span>
+<span id="section-cb14-12"><a href="#section-cb14-12" aria-hidden="true" tabindex="-1"></a>          <span class="at">choices =</span> <span class="fu">names</span>(palmerpenguins<span class="sc">::</span>penguins)</span>
+<span id="section-cb14-13"><a href="#section-cb14-13" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="section-cb14-14"><a href="#section-cb14-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># INPUT [y_var] -----</span></span>
+<span id="section-cb14-15"><a href="#section-cb14-15" aria-hidden="true" tabindex="-1"></a>        <span class="fu">selectInput</span>(</span>
+<span id="section-cb14-16"><a href="#section-cb14-16" aria-hidden="true" tabindex="-1"></a>          <span class="at">inputId =</span> <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb14-17"><a href="#section-cb14-17" aria-hidden="true" tabindex="-1"></a>                       <span class="at">id =</span> <span class="st">&quot;y_var&quot;</span>),</span>
+<span id="section-cb14-18"><a href="#section-cb14-18" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> <span class="st">&quot;Y column&quot;</span>, </span>
+<span id="section-cb14-19"><a href="#section-cb14-19" aria-hidden="true" tabindex="-1"></a>          <span class="at">selected =</span> <span class="st">&quot;bill_length_mm&quot;</span>,</span>
+<span id="section-cb14-20"><a href="#section-cb14-20" aria-hidden="true" tabindex="-1"></a>          <span class="at">choices =</span> <span class="fu">names</span>(palmerpenguins<span class="sc">::</span>penguins)</span>
+<span id="section-cb14-21"><a href="#section-cb14-21" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="section-cb14-22"><a href="#section-cb14-22" aria-hidden="true" tabindex="-1"></a>        <span class="co"># INPUT [color] -----</span></span>
+<span id="section-cb14-23"><a href="#section-cb14-23" aria-hidden="true" tabindex="-1"></a>        <span class="fu">selectInput</span>(</span>
+<span id="section-cb14-24"><a href="#section-cb14-24" aria-hidden="true" tabindex="-1"></a>          <span class="at">inputId =</span> <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb14-25"><a href="#section-cb14-25" aria-hidden="true" tabindex="-1"></a>                       <span class="at">id =</span> <span class="st">&quot;color&quot;</span>),</span>
+<span id="section-cb14-26"><a href="#section-cb14-26" aria-hidden="true" tabindex="-1"></a>          <span class="at">label =</span> <span class="st">&quot;Color column&quot;</span>,</span>
+<span id="section-cb14-27"><a href="#section-cb14-27" aria-hidden="true" tabindex="-1"></a>          <span class="at">selected =</span> <span class="st">&quot;species&quot;</span>,</span>
+<span id="section-cb14-28"><a href="#section-cb14-28" aria-hidden="true" tabindex="-1"></a>          <span class="at">choices =</span> <span class="fu">names</span>(palmerpenguins<span class="sc">::</span>penguins)</span>
+<span id="section-cb14-29"><a href="#section-cb14-29" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="section-cb14-30"><a href="#section-cb14-30" aria-hidden="true" tabindex="-1"></a>      ),</span>
+<span id="section-cb14-31"><a href="#section-cb14-31" aria-hidden="true" tabindex="-1"></a>      <span class="fu">mainPanel</span>(</span>
+<span id="section-cb14-32"><a href="#section-cb14-32" aria-hidden="true" tabindex="-1"></a>        <span class="co"># OUTPUT [table] -----</span></span>
+<span id="section-cb14-33"><a href="#section-cb14-33" aria-hidden="true" tabindex="-1"></a>        <span class="fu">reactableOutput</span>(</span>
+<span id="section-cb14-34"><a href="#section-cb14-34" aria-hidden="true" tabindex="-1"></a>          <span class="at">outputId =</span></span>
+<span id="section-cb14-35"><a href="#section-cb14-35" aria-hidden="true" tabindex="-1"></a>            <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb14-36"><a href="#section-cb14-36" aria-hidden="true" tabindex="-1"></a>               <span class="at">id =</span> <span class="st">&quot;table&quot;</span>)</span>
+<span id="section-cb14-37"><a href="#section-cb14-37" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="section-cb14-38"><a href="#section-cb14-38" aria-hidden="true" tabindex="-1"></a>        <span class="co"># some space</span></span>
+<span id="section-cb14-39"><a href="#section-cb14-39" aria-hidden="true" tabindex="-1"></a>        <span class="fu">br</span>(), <span class="fu">br</span>(), <span class="fu">br</span>(),</span>
+<span id="section-cb14-40"><a href="#section-cb14-40" aria-hidden="true" tabindex="-1"></a>        <span class="co"># values</span></span>
+<span id="section-cb14-41"><a href="#section-cb14-41" aria-hidden="true" tabindex="-1"></a>        tags<span class="sc">$</span><span class="fu">strong</span>(<span class="st">&quot;data &quot;</span>, tags<span class="sc">$</span><span class="fu">code</span>(<span class="st">&quot;reactiveValues:&quot;</span>)),</span>
+<span id="section-cb14-42"><a href="#section-cb14-42" aria-hidden="true" tabindex="-1"></a>        <span class="co"># OUTPUT [value] -----</span></span>
+<span id="section-cb14-43"><a href="#section-cb14-43" aria-hidden="true" tabindex="-1"></a>        <span class="fu">verbatimTextOutput</span>(</span>
+<span id="section-cb14-44"><a href="#section-cb14-44" aria-hidden="true" tabindex="-1"></a>          <span class="at">outputId =</span></span>
+<span id="section-cb14-45"><a href="#section-cb14-45" aria-hidden="true" tabindex="-1"></a>            <span class="fu">NS</span>(<span class="at">namespace =</span> id, </span>
+<span id="section-cb14-46"><a href="#section-cb14-46" aria-hidden="true" tabindex="-1"></a>               <span class="at">id =</span> <span class="st">&quot;value&quot;</span>)</span>
+<span id="section-cb14-47"><a href="#section-cb14-47" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="section-cb14-48"><a href="#section-cb14-48" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="section-cb14-49"><a href="#section-cb14-49" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="section-cb14-50"><a href="#section-cb14-50" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="section-cb14-51"><a href="#section-cb14-51" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="section-cb14-52"><a href="#section-cb14-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="section-cb14-53"><a href="#section-cb14-53" aria-hidden="true" tabindex="-1"></a><span class="co"># dataServer ----------------------------------------</span></span>
+<span id="section-cb14-54"><a href="#section-cb14-54" aria-hidden="true" tabindex="-1"></a>dataServer <span class="ot">&lt;-</span> <span class="cf">function</span>(id) {</span>
+<span id="section-cb14-55"><a href="#section-cb14-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">moduleServer</span>(<span class="at">id =</span> id, <span class="at">module =</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="section-cb14-56"><a href="#section-cb14-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># REACTIVE [data] -----</span></span>
+<span id="section-cb14-57"><a href="#section-cb14-57" aria-hidden="true" tabindex="-1"></a>    data <span class="ot">&lt;-</span> <span class="fu">reactive</span>(</span>
+<span id="section-cb14-58"><a href="#section-cb14-58" aria-hidden="true" tabindex="-1"></a>      <span class="fu">select</span>(</span>
+<span id="section-cb14-59"><a href="#section-cb14-59" aria-hidden="true" tabindex="-1"></a>        palmerpenguins<span class="sc">::</span>penguins,</span>
+<span id="section-cb14-60"><a href="#section-cb14-60" aria-hidden="true" tabindex="-1"></a>        <span class="fu">all_of</span>(<span class="fu">c</span>(input<span class="sc">$</span>x_var, input<span class="sc">$</span>y_var, input<span class="sc">$</span>color))</span>
+<span id="section-cb14-61"><a href="#section-cb14-61" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="section-cb14-62"><a href="#section-cb14-62" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="section-cb14-63"><a href="#section-cb14-63" aria-hidden="true" tabindex="-1"></a>    <span class="co"># OUTPUT [table] -----</span></span>
+<span id="section-cb14-64"><a href="#section-cb14-64" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>table <span class="ot">&lt;-</span> reactable<span class="sc">::</span><span class="fu">renderReactable</span>({</span>
+<span id="section-cb14-65"><a href="#section-cb14-65" aria-hidden="true" tabindex="-1"></a>      reactable<span class="sc">::</span><span class="fu">reactable</span>(</span>
+<span id="section-cb14-66"><a href="#section-cb14-66" aria-hidden="true" tabindex="-1"></a>        <span class="at">data =</span> <span class="fu">data</span>(),</span>
+<span id="section-cb14-67"><a href="#section-cb14-67" aria-hidden="true" tabindex="-1"></a>        <span class="at">defaultPageSize =</span> <span class="dv">10</span>,</span>
+<span id="section-cb14-68"><a href="#section-cb14-68" aria-hidden="true" tabindex="-1"></a>        <span class="at">resizable =</span> <span class="cn">TRUE</span>,</span>
+<span id="section-cb14-69"><a href="#section-cb14-69" aria-hidden="true" tabindex="-1"></a>        <span class="at">highlight =</span> <span class="cn">TRUE</span>,</span>
+<span id="section-cb14-70"><a href="#section-cb14-70" aria-hidden="true" tabindex="-1"></a>        <span class="at">height =</span> <span class="dv">350</span>,</span>
+<span id="section-cb14-71"><a href="#section-cb14-71" aria-hidden="true" tabindex="-1"></a>        <span class="at">wrap =</span> <span class="cn">FALSE</span>,</span>
+<span id="section-cb14-72"><a href="#section-cb14-72" aria-hidden="true" tabindex="-1"></a>        <span class="at">bordered =</span> <span class="cn">TRUE</span>,</span>
+<span id="section-cb14-73"><a href="#section-cb14-73" aria-hidden="true" tabindex="-1"></a>        <span class="at">searchable =</span> <span class="cn">TRUE</span>,</span>
+<span id="section-cb14-74"><a href="#section-cb14-74" aria-hidden="true" tabindex="-1"></a>        <span class="at">filterable =</span> <span class="cn">TRUE</span></span>
+<span id="section-cb14-75"><a href="#section-cb14-75" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="section-cb14-76"><a href="#section-cb14-76" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="section-cb14-77"><a href="#section-cb14-77" aria-hidden="true" tabindex="-1"></a>    <span class="co"># OUTPUT [values] -----</span></span>
+<span id="section-cb14-78"><a href="#section-cb14-78" aria-hidden="true" tabindex="-1"></a>    output<span class="sc">$</span>value <span class="ot">&lt;-</span> shiny<span class="sc">::</span><span class="fu">renderPrint</span>({</span>
+<span id="section-cb14-79"><a href="#section-cb14-79" aria-hidden="true" tabindex="-1"></a>      all_values <span class="ot">&lt;-</span> <span class="fu">reactiveValuesToList</span>(<span class="at">x =</span> input, </span>
+<span id="section-cb14-80"><a href="#section-cb14-80" aria-hidden="true" tabindex="-1"></a>                                         <span class="at">all.names =</span> <span class="cn">TRUE</span>)</span>
+<span id="section-cb14-81"><a href="#section-cb14-81" aria-hidden="true" tabindex="-1"></a>      values <span class="ot">&lt;-</span> all_values[<span class="fu">str_detect</span>(<span class="fu">names</span>(all_values), <span class="st">&quot;reactable&quot;</span>, <span class="cn">TRUE</span>)]</span>
+<span id="section-cb14-82"><a href="#section-cb14-82" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(values)</span>
+<span id="section-cb14-83"><a href="#section-cb14-83" aria-hidden="true" tabindex="-1"></a>    })</span>
+<span id="section-cb14-84"><a href="#section-cb14-84" aria-hidden="true" tabindex="-1"></a>  })</span>
+<span id="section-cb14-85"><a href="#section-cb14-85" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="section-part-1-ui" class="section level1">
+<h1>Part 1) UI</h1>
+<p>The UI combines both in inputs and outputs from the
+<strong><code>plotUI()</code> and </strong><code>dataUI()</code>. We’ll
+create a medium black line (<code>mbl</code>) to separate the graph from
+the data in the display.</p>
+<div class="sourceCode" id="section-cb15"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb15-1"><a href="#section-cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># medium black line (mbl)</span></span>
+<span id="section-cb15-2"><a href="#section-cb15-2" aria-hidden="true" tabindex="-1"></a>mbl <span class="ot">&lt;-</span> <span class="fu">tagList</span>(tags<span class="sc">$</span><span class="fu">hr</span>(<span class="at">style =</span> <span class="st">&quot;border-top: 2px solid #333333;&quot;</span>))</span>
+<span id="section-cb15-3"><a href="#section-cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># UI ----</span></span>
+<span id="section-cb15-4"><a href="#section-cb15-4" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">fluidPage</span>(</span>
+<span id="section-cb15-5"><a href="#section-cb15-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">h3</span>(<span class="st">&quot;Plot module&quot;</span>),</span>
+<span id="section-cb15-6"><a href="#section-cb15-6" aria-hidden="true" tabindex="-1"></a>            <span class="co"># plot UI module</span></span>
+<span id="section-cb15-7"><a href="#section-cb15-7" aria-hidden="true" tabindex="-1"></a>            <span class="fu">plotUI</span>(<span class="at">id =</span> <span class="st">&quot;graph&quot;</span>),</span>
+<span id="section-cb15-8"><a href="#section-cb15-8" aria-hidden="true" tabindex="-1"></a>        mbl, </span>
+<span id="section-cb15-9"><a href="#section-cb15-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">h3</span>(<span class="st">&quot;Data module&quot;</span>),</span>
+<span id="section-cb15-10"><a href="#section-cb15-10" aria-hidden="true" tabindex="-1"></a>            <span class="co"># data UI module</span></span>
+<span id="section-cb15-11"><a href="#section-cb15-11" aria-hidden="true" tabindex="-1"></a>            <span class="fu">dataUI</span>(<span class="at">id =</span> <span class="st">&quot;data&quot;</span>)</span>
+<span id="section-cb15-12"><a href="#section-cb15-12" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="section-part-2-server" class="section level1">
+<h1>Part 2) Server</h1>
+<p>The server combines the reactives and render functions from both the
+<strong><code>plotServer</code></strong> and
+<strong><code>dataServer</code>, and we make sure to use the same
+</strong><code>id</code>s we used in the UI.</p>
+<div class="sourceCode" id="section-cb16"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb16-1"><a href="#section-cb16-1" aria-hidden="true" tabindex="-1"></a>server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="section-cb16-2"><a href="#section-cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># plot server module</span></span>
+<span id="section-cb16-3"><a href="#section-cb16-3" aria-hidden="true" tabindex="-1"></a>        <span class="fu">plotServer</span>(<span class="at">id =</span> <span class="st">&quot;graph&quot;</span>)</span>
+<span id="section-cb16-4"><a href="#section-cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># data server module</span></span>
+<span id="section-cb16-5"><a href="#section-cb16-5" aria-hidden="true" tabindex="-1"></a>        <span class="fu">dataServer</span>(<span class="at">id =</span> <span class="st">&quot;data&quot;</span>)</span>
+<span id="section-cb16-6"><a href="#section-cb16-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<p><strong>Note:</strong> We might expect the
+<strong><code>inputId</code>s, reactive (<code>data()</code>), and
+</strong><code>outputId</code>s in <strong><code>plotUI()</code> to
+collide with the </strong><code>inputId</code>s, reactive
+(<code>data()</code>), and <strong><code>outputId</code>s in
+</strong><code>dataUI()</code>, but modules makes this possible.</p>
+</div>
+<div id="section-part-3-plotdataapp" class="section level1">
+<h1>Part 3) <code>plotdataApp()</code></h1>
+<p>We run this application by wrapping everything in a
+<strong><code>plotdataApp()</code> function (which includes our
+</strong><code>shinyApp()</code> function):</p>
+<div class="sourceCode" id="section-cb17"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb17-1"><a href="#section-cb17-1" aria-hidden="true" tabindex="-1"></a>plotdataApp <span class="ot">&lt;-</span> <span class="cf">function</span>() {</span>
+<span id="section-cb17-2"><a href="#section-cb17-2" aria-hidden="true" tabindex="-1"></a><span class="co"># medium black line (mbl)</span></span>
+<span id="section-cb17-3"><a href="#section-cb17-3" aria-hidden="true" tabindex="-1"></a>mbl <span class="ot">&lt;-</span> <span class="fu">tagList</span>(tags<span class="sc">$</span><span class="fu">hr</span>(<span class="at">style =</span> <span class="st">&quot;border-top: 2px solid #333333;&quot;</span>))</span>
+<span id="section-cb17-4"><a href="#section-cb17-4" aria-hidden="true" tabindex="-1"></a><span class="co"># UI ----</span></span>
+<span id="section-cb17-5"><a href="#section-cb17-5" aria-hidden="true" tabindex="-1"></a>ui <span class="ot">&lt;-</span> <span class="fu">fluidPage</span>(</span>
+<span id="section-cb17-6"><a href="#section-cb17-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">h3</span>(<span class="st">&quot;Plot module&quot;</span>),</span>
+<span id="section-cb17-7"><a href="#section-cb17-7" aria-hidden="true" tabindex="-1"></a>            <span class="co"># plot UI module</span></span>
+<span id="section-cb17-8"><a href="#section-cb17-8" aria-hidden="true" tabindex="-1"></a>            <span class="fu">plotUI</span>(<span class="at">id =</span> <span class="st">&quot;graph&quot;</span>),</span>
+<span id="section-cb17-9"><a href="#section-cb17-9" aria-hidden="true" tabindex="-1"></a>        mbl, </span>
+<span id="section-cb17-10"><a href="#section-cb17-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">h3</span>(<span class="st">&quot;Data module&quot;</span>),</span>
+<span id="section-cb17-11"><a href="#section-cb17-11" aria-hidden="true" tabindex="-1"></a>            <span class="co"># data UI module</span></span>
+<span id="section-cb17-12"><a href="#section-cb17-12" aria-hidden="true" tabindex="-1"></a>            <span class="fu">dataUI</span>(<span class="at">id =</span> <span class="st">&quot;data&quot;</span>)</span>
+<span id="section-cb17-13"><a href="#section-cb17-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="section-cb17-14"><a href="#section-cb17-14" aria-hidden="true" tabindex="-1"></a><span class="co"># SERVER ----</span></span>
+<span id="section-cb17-15"><a href="#section-cb17-15" aria-hidden="true" tabindex="-1"></a>  server <span class="ot">&lt;-</span> <span class="cf">function</span>(input, output, session) {</span>
+<span id="section-cb17-16"><a href="#section-cb17-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># plot server module</span></span>
+<span id="section-cb17-17"><a href="#section-cb17-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">plotServer</span>(<span class="at">id =</span> <span class="st">&quot;graph&quot;</span>)</span>
+<span id="section-cb17-18"><a href="#section-cb17-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># data server module</span></span>
+<span id="section-cb17-19"><a href="#section-cb17-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">dataServer</span>(<span class="at">id =</span> <span class="st">&quot;data&quot;</span>)</span>
+<span id="section-cb17-20"><a href="#section-cb17-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="section-cb17-21"><a href="#section-cb17-21" aria-hidden="true" tabindex="-1"></a><span class="co"># RUN ----</span></span>
+<span id="section-cb17-22"><a href="#section-cb17-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">shinyApp</span>(ui, server,</span>
+<span id="section-cb17-23"><a href="#section-cb17-23" aria-hidden="true" tabindex="-1"></a>    <span class="at">options =</span> <span class="fu">list</span>(<span class="at">height =</span> <span class="dv">500</span>, <span class="at">width =</span> <span class="dv">600</span>)</span>
+<span id="section-cb17-24"><a href="#section-cb17-24" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="section-cb17-25"><a href="#section-cb17-25" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+</div>
+<div id="section-app" class="section level1">
+<h1>App</h1>
+<p>This application is deployed here:</p>
+<div class="sourceCode" id="section-cb18"><pre
+class="sourceCode r"><code class="sourceCode r"><span id="section-cb18-1"><a href="#section-cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># plotdataApp()</span></span></code></pre></div>
+</div>
+<div id="section-plot-reactive-values" class="section level1">
+<h1>Plot reactive values</h1>
+<p>We’ve also created a version of this application using showcase mode,
+which we can see <a
+href="https://mjfrigaard.shinyapps.io/plotdataApp-showcase/">here.</a>
+When we change the inputs for the <strong>Plot module</strong>, we can
+see the code for the <strong><code>output$plot</code></strong> and
+<strong><code>output$value</code></strong> lights up:</p>
+<div id="section-the-x-values" class="section level2">
+<h2>The <strong><code>x</code></strong> values</h2>
+<p><img
+src="https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdataApp-plot-x-reactives.gif" /><!-- --></p>
+</div>
+<div id="section-the-y-values" class="section level2">
+<h2>The <strong><code>y</code></strong> values:</h2>
+<p><img
+src="https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdataApp-plot-y-reactives.gif" /><!-- --></p>
+</div>
+<div id="section-the-color-values" class="section level2">
+<h2>The <strong><code>color</code></strong> values:</h2>
+<p><img
+src="https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdataApp-plot-color-reactives.gif" /><!-- --></p>
+</div>
+</div>
+<div id="section-data-reactive-values" class="section level1">
+<h1>Data reactive values</h1>
+<p>Likewise, when we change the inputs for the <strong>Data
+module</strong>, we can see the reactives and render functions light
+up:</p>
+<p><img
+src="https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/plotdataApp-plot-change-table.gif" /><!-- --></p>
+</div>
+<div id="section-recap" class="section level1">
+<h1>Recap</h1>
+<p>This application works because the modules create separate namespaces
+for the inputs, reactives, and outputs:</p>
+<p><img
+src="https://raw.githubusercontent.com/mjfrigaard/shinymods/main/img/namespace.png" /><!-- --></p>
+<p>By creating distinct namespaces with <strong><code>NS()</code>, we’ve
+isolated the </strong><code>inputId</code>’s and
+**<code>outputId</code>s (so the names don’t collide).</p>
+<p>Check out the files used to create this application <a
+href="https://github.com/mjfrigaard/shinymods/tree/main/04-plotdataApp">here</a>.
+Read more about modules in <a
+href="https://engineering-shiny.org/structuring-project.html#using-shiny-modules">Engineering
+Production-Grade Shiny Apps</a> and <a
+href="https://mastering-shiny.org/scaling-modules.html">Mastering
+Shiny</a>.</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("section-TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+<script>
+$(document).ready(function () {
+  window.initializeCodeFolding("show" === "show");
+});
+</script>
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#section-TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

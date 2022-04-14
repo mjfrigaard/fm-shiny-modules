@@ -1,0 +1,14 @@
+name: 03-dataMod
+title: 03-dataMod
+username:
+account: mjfrigaard
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5638202
+bundleId: 5571288
+url: https://mjfrigaard.shinyapps.io/03-dataMod/
+when: 1644639385.21827
+lastSyncTime: 1644639385.21832
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: R/dataServer.R|R/dataUI.R|R/modules.R

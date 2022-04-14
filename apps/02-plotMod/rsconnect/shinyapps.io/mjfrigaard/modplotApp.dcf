@@ -1,0 +1,14 @@
+name: modplotApp
+title: modplotApp
+username:
+account: mjfrigaard
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5568228
+bundleId: 5536387
+url: https://mjfrigaard.shinyapps.io/modplotApp/
+when: 1643833633.1392
+lastSyncTime: 1643833633.13921
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: R/modules.R|R/plotServer.R|R/plotUI.R

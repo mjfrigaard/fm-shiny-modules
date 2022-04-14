@@ -1,0 +1,14 @@
+name: xlsxUploadApp
+title: xlsxUploadApp
+username:
+account: mjfrigaard
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 5585339
+bundleId: 5549982
+url: https://mjfrigaard.shinyapps.io/xlsxUploadApp/
+when: 1644185723.43979
+lastSyncTime: 1644185723.4398
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: data-raw/.DS_Store|data-raw/csv/Batting.csv|data-raw/csv/Fielding.csv|data-raw/csv/People.csv|data-raw/xlsx/lahman.xlsx|R/demo.R|R/load_xlsx.R|R/xlsxuploadServer.R|R/xlsxuploadUI.R
