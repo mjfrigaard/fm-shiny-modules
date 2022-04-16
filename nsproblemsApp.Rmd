@@ -1,6 +1,5 @@
 ---
 title: "nsproblemsApp: (an app without modules)"
-author: "Martin Frigaard"
 output:
   html_document: 
     highlight: espresso
@@ -53,15 +52,11 @@ base::options(
 )
 ```
 
-Welcome! `fm-shiny-modules` is a series of shiny apps that demonstrate the benefit of using modules. I've also included some explanations, figures, and resources that helped me understand how modules work. 
-
 # Background
 
-When I first started creating shiny applications, I assumed complexity was a inherent feature of their design. Even if I separated the app into `ui.R` and `server.R` scripts, it quickly became hard to manage all the inputs, reactives, and outputs.
+ As noted in [this excellent article by Winston Chang ](https://shiny.rstudio.com/articles/modules.html), "***Input and output IDs in Shiny apps share a global namespace, meaning, each ID must be unique across the entire app.***" This means if you create an `input$` ID (`selectInput()`, `numericInput()`, etc.) or and `output$` ID (`plotOutput()`,` tableOutput()`, etc.) in one place in your app, it can't be used anywhere else. 
 
-I experimented with modules for awhile, but the concepts didn't start to click until shiny [version 1.5.0](https://shiny.rstudio.com/articles/modules.html) with the introduction of the [`moduleServer()`](https://shiny.rstudio.com/reference/shiny/1.7.0/moduleServer.html) function. This function (along with the `NS()` function) helped me understand the purpose of modules (and the problem(s) they solve).
-
-# An example of the problem
+# An example of namespace problems
 
 We're going to start by purposely building an application that demonstrates what happens when we have namespace collision in a shiny application. This shiny app will be built *without* modules using data from the [`palmerpenguins` package](https://allisonhorst.github.io/palmerpenguins/), graphs with the [`ggplot2` package](https://ggplot2.tidyverse.org/), and a table using the [`reactable` package](https://glin.github.io/reactable/). 
 
@@ -192,7 +187,7 @@ shinyApp(ui = ui, server = server)
 
 The deployed `penguinsPlot` application is here: 
 
-```{r nsproblemsPlot, echo=FALSE}
+```{r nsproblemsPlot, echo=FALSE, class.source = 'fold-hide'}
 shinyApp(ui = fluidPage(
   titlePanel(title = "penguinsPlot"),
   sidebarLayout(
@@ -274,8 +269,11 @@ server = function(input, output, session) {
 
   # reactive values
   output$value <- renderPrint({
-    all_values <- reactiveValuesToList(x = input, all.names = TRUE)
-    values <- all_values[str_detect(names(all_values), "color|x_var|y_var")]
+    all_values <- reactiveValuesToList(x = input, 
+                                       all.names = TRUE)
+    # our column values 
+    col_values <- str_detect(names(all_values), "color|x_var|y_var")
+    values <- all_values[col_values]
     print(values)
   })
 }, options = list(height = 800, width = 800)
@@ -284,15 +282,15 @@ server = function(input, output, session) {
 
 # Data app 
 
-Now lets assume we want to display the three variables we've used in our plot in a table. 
+Lets assume we also want to display the three variables from our plot in a table. 
 
 ## Inputs 
 
-- `input$x_var` = the `selectInput()` variable for the x axis (and label)
+- `input$x_var` = the `selectInput()` variable for the x axis
 
-- `input$y_var` = the`selectInput()`  variable for the y axis (and label)
+- `input$y_var` = the`selectInput()`  variable for the y axis 
 
-- `input$color` = the `selectInput()` variable to color the points (and legend)
+- `input$color` = the `selectInput()` variable to color the points 
 
 ## Reactives 
 
@@ -300,11 +298,11 @@ Now lets assume we want to display the three variables we've used in our plot in
 
 ## Outputs 
 
-- `output$plot` = the `ggplot2` output from `plotOutput()`/`renderPlot()`
+- `output$table` = the `reactable` output from `reactable::reactableOutput()`/ `reactable::renderReactable()`
 
-- `output$value` = the `verbatimTextOutput()`/`renderPrint()` output of the reactive values within the application using the [`reactiveValuesToList()`](https://shiny.rstudio.com/reference/shiny/1.0.5/reactiveValuesToList.html) function, which will create a list of all the values in `reactivevalues` (you can see an application using this function  [here](https://mjfrigaard.shinyapps.io/00-reactiveValuesMod/))
+- `output$value` = the `verbatimTextOutput()`/`renderPrint()` will render the output of the reactive values within this application (using the [`reactiveValuesToList()`](https://shiny.rstudio.com/reference/shiny/1.0.5/reactiveValuesToList.html) function).
 
-```{r Data-app, eval=FALSE}
+```{r Data-app, eval=FALSE, class.source = 'fold-hide'}
 library(shiny)
 library(tidyverse)
 library(palmerpenguins)
@@ -319,21 +317,33 @@ ui <- fluidPage(
         inputId = "x_var",
         label = "X column (table)",
         selected = "body_mass_g",
-        choices = names(palmerpenguins::penguins)
+        choices = names(
+          select(
+            palmerpenguins::penguins, where(is.numeric)
+          )
+        )
       ),
       # y variable table
       selectInput(
         inputId = "y_var",
         label = "Y column (table)",
         selected = "bill_length_mm",
-        choices = names(palmerpenguins::penguins)
+        choices = names(
+          select(
+            palmerpenguins::penguins, where(is.numeric)
+          )
+        )
       ),
       # color table
       selectInput(
         inputId = "color",
         label = "Color column (table)",
         selected = "species",
-        choices = names(palmerpenguins::penguins)
+        choices = names(
+          select(
+            palmerpenguins::penguins, where(is.factor)
+          )
+        )
       )
     ),
     mainPanel(
@@ -382,6 +392,8 @@ shinyApp(ui = ui, server = server)
 
 ## penguinsData
 
+We'll call this app `penguinsData`, and it's deployed below:
+
 ```{r penguinsData, echo=FALSE}
 shinyApp(
 ui = fluidPage(
@@ -393,21 +405,33 @@ ui = fluidPage(
         inputId = "x_var",
         label = "X column (table)",
         selected = "body_mass_g",
-        choices = names(palmerpenguins::penguins)
+        choices = names(
+          select(
+            palmerpenguins::penguins, where(is.numeric)
+          )
+        )
       ),
       # y variable table
       selectInput(
         inputId = "y_var",
         label = "Y column (table)",
         selected = "bill_length_mm",
-        choices = names(palmerpenguins::penguins)
+        choices = names(
+          select(
+            palmerpenguins::penguins, where(is.numeric)
+          )
+        )
       ),
       # color table
       selectInput(
         inputId = "color",
         label = "Color column (table)",
         selected = "species",
-        choices = names(palmerpenguins::penguins)
+        choices = names(
+          select(
+            palmerpenguins::penguins, where(is.factor)
+          )
+        )
       )
     ),
     mainPanel(
@@ -445,8 +469,11 @@ server = function(input, output, session) {
 
   # reactive values
   output$value <- renderPrint({
-    all_values <- reactiveValuesToList(x = input, all.names = TRUE)
-    values <- all_values[str_detect(names(all_values), "color|x_var|y_var")]
+    all_values <- reactiveValuesToList(x = input, 
+                                       all.names = TRUE)
+    # our column values 
+    col_values <- str_detect(names(all_values), "color|x_var|y_var")
+    values <- all_values[col_values]
     print(values)
   })
   }, options = list(height = 800, width = 800)
@@ -455,10 +482,25 @@ server = function(input, output, session) {
 
 # Namespace problems 
 
-In the UI, we'll add `inputId`'s for the graph and table outputs. We'll also include labels in the comments for each of input `(graph)` and `(table)`, and add a `"value"` output (with `verbatimTextOutput()`) for our reactive values.
+To combine both `penguinsPlot` and `penguinsData`, we might just try adding both inputs and outputs to the `ui` and `server`.
 
-```{r nsproblems-ui, class.source = 'fold-hide'}
-# ui ----------------------------------------------------------------------
+## Inputs 
+
++ We include the IDs for both the graph and the table inputs (`input$x_var`, `input$y_var`,`input$color`) We'll also add some labels for each of the inputs `(graph)` and `(table)`. 
+
+## Outputs 
+
++ we include both outputs (`output$plot` and `output$table`)
+
+## Reactives  
+
++ In the `server`, we'll create the `data()` reactive and use it in both the `output$plot` and `output$table`
+
++ and add we'll include a `"value"` output (with `verbatimTextOutput()`) for our reactive values. 
+
+>  ***If you're somewhat familiar with shiny code, you're immediately wondering how shiny is going to handle this duplication of names (as you should). But, since this application is meant to demonstrate namespace collisions, we're purposely designing it with some known issues.***
+
+```{r nsproblems-ui, class.source = 'fold-hide', eval=FALSE}
 ui <- fluidPage(title = "nsproblemsApp",
   sidebarLayout(
     sidebarPanel(
@@ -528,11 +570,7 @@ ui <- fluidPage(title = "nsproblemsApp",
     )
   )
 )
-```
-
-In the `server.R`, we'll create the `data()` reactive and use it in both the `output$plot` and `output$table`. ***If you're somewhat familiar with shiny code, you're immediately wondering how shiny is going to handle this duplication of names (as you should). But, since this application is meant to demonstrate namespace collisions, we're purposely designing it with some known issues.***
-
-```{r nsproblems-server, class.source = 'fold-hide'}
+# server
 server <- function(input, output, session) {
   # data
   data <- reactive(
@@ -573,7 +611,6 @@ server <- function(input, output, session) {
       height = 350,
       wrap = FALSE,
       bordered = TRUE,
-      searchable = TRUE,
       filterable = TRUE
     )
   })
@@ -587,7 +624,10 @@ server <- function(input, output, session) {
 }
 ```
 
+
 ## nsproblemsApp
+
+We'll call this app `nsproblemsApp` and deploy it below:
 
 ```{r nsproblemsApp, echo=FALSE}
 shinyApp(
@@ -669,6 +709,20 @@ shinyApp(
       all_of(c(input$x_var, input$y_var, input$color))
     )
   )
+  
+  # table display
+  output$table <- reactable::renderReactable({
+    reactable::reactable(
+      data = data(),
+      defaultPageSize = 10,
+      resizable = TRUE,
+      highlight = TRUE,
+      height = 350,
+      wrap = FALSE,
+      bordered = TRUE,
+      filterable = TRUE
+    )
+  })
 
   # plot display
   output$plot <- renderPlot({
@@ -691,21 +745,6 @@ shinyApp(
       )
   })
 
-  # table display
-  output$table <- reactable::renderReactable({
-    reactable::reactable(
-      data = data(),
-      defaultPageSize = 10,
-      resizable = TRUE,
-      highlight = TRUE,
-      height = 350,
-      wrap = FALSE,
-      bordered = TRUE,
-      searchable = TRUE,
-      filterable = TRUE
-    )
-  })
-
   # reactive values
   output$value <- renderPrint({
     all_values <- reactiveValuesToList(x = input, all.names = TRUE)
@@ -714,8 +753,6 @@ shinyApp(
   })
   }, options = list(height = 1100, width = 800))
 ```
-
-
 
 # App overview
 
@@ -820,11 +857,11 @@ knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-m
 When we check the additional `selectInput()`s, we can see that only the values for **(graph)** trigger the code in the server (none of the values for **(table)** trigger a response).
 
 ```{r plotdataApp-x_var-no-reaction-gif, echo=FALSE, eval=TRUE}
-knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdataApp-x_var-no-reaction.gif")
+# knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdataApp-x_var-no-reaction.gif")
 ```
 
 # Recap
 
-This application demonstrates the issue of having duplicate ID's in the same namespace. As noted [here](https://shiny.rstudio.com/articles/modules.html), "*Input and output IDs in Shiny apps share a global namespace, meaning, each ID must be unique across the entire app.*" In this application, we purposely created the application with duplicate IDs (`x_var`, `y_var`, and `color`) to demonstrate how this can cause problems with reactivity. As we can see, the IDs get used according to the *execution order in the reactive graph*, and not the way the code is organized in the server. 
+This application demonstrates the issue of having duplicate ID's in the same namespace. As we can see, the IDs get used according to the *execution order in the reactive graph*, and not the way the code is organized in the server. 
 
 In the next app, we're going to build a shiny module to handle this namespace issue. 

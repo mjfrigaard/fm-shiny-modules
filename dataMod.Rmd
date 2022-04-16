@@ -181,5 +181,5 @@ The application is deployed here:
 Below is another adapted reactive graph for this module. We can see the shared `id` between the UI and server is `"data"`, and the  `reactiveValues` show the columns displayed in the inputs:
 
 ```{r dataDemo-reactiveValues-png, echo=FALSE, eval=TRUE}
-knitr::include_graphics("images/dataDemo-reactiveValues.png")
+knitr::include_graphics("img/dataDemo-reactiveValues.png")
 ```

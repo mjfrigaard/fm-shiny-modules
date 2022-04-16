@@ -208,7 +208,7 @@ I've adapted the reactive graph to reflect how the `plotUI()` & `plotServer()` m
 <!-- images/module.png -->
 
 ```{r module-png, echo=FALSE, eval=TRUE}
-knitr::include_graphics("images/module.png")
+knitr::include_graphics("img/module.png")
 ```
 
 As you can see from this figure, the `plotUI()` and `plotServer()` link the UI to the server via the shared `id` (`"graph"`). The module creates a namespace that contains all the inputs and outputs.
@@ -216,7 +216,7 @@ As you can see from this figure, the `plotUI()` and `plotServer()` link the UI t
 Below is an adapted reactive graph for the inputs, reactives, and outputs used to create the graph in `plotMod()`:
 
 ```{r plotDemo-module-graph-png, echo=FALSE, eval=TRUE}
-knitr::include_graphics("images/plotDemo-module-graph.png")
+knitr::include_graphics("img/plotDemo-module-graph.png")
 ```
 
 The three `inputId` values (`input$x_var`, `input$y_var`, and `input$color`) are used to create the `data()` reactive:
@@ -239,7 +239,7 @@ geom_point(
 Collectively, these create the following in the UI:
 
 ```{r plotDemo.png, echo=FALSE, eval=TRUE}
-knitr::include_graphics("images/plotDemo.png")
+knitr::include_graphics("img/plotDemo.png")
 ```
 
 # Reactive values 
@@ -247,7 +247,7 @@ knitr::include_graphics("images/plotDemo.png")
 However, recall I also included the `reactiveValuesToList()` function, which prints the `reactiveValues` (and the inputs) the UI. This is not necessary for the plot to render, but I've included it here to show what inputs are available in this namespace:
 
 ```{r plotDemo-reactiveValues.png, echo=FALSE, eval=TRUE}
-knitr::include_graphics("images/plotDemo-reactiveValues.png")
+knitr::include_graphics("img/plotDemo-reactiveValues.png")
 ```
 
 The output shows the three `input` values I am using in the `data()` reactive (and graph). If we change the variables in the `selectInput()`, the values change in the `renderPrint()` function.

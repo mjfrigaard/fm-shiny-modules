@@ -1,0 +1,14 @@
+name: 00-reactiveValuesMod
+title: 00-reactiveValuesMod
+username:
+account: mjfrigaard
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6092079
+bundleId: 5799202
+url: https://mjfrigaard.shinyapps.io/00-reactiveValuesMod/
+when: 1649955129.22774
+lastSyncTime: 1649955129.22776
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: R/modules.R|R/reactiveValuesServer.R|R/reactiveValuesUI.R

@@ -414,15 +414,15 @@ div.tocify {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">fm-shiny-modules</a>
+      <a class="navbar-brand" href="index.html">shiny modules (field manual)</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">modules</a>
+  <a href="index.html">Overview</a>
 </li>
 <li>
-  <a href="problemApp.html">A problematic shiny app</a>
+  <a href="nsproblemsApp.html">namespace problems</a>
 </li>
 <li>
   <a href="plotMod.html">A plot module</a>
@@ -601,7 +601,7 @@ class="sourceCode r"><code class="sourceCode r"><span id="section-cb3-1"><a href
 <span id="section-cb3-17"><a href="#section-cb3-17" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="section-cb3-18"><a href="#section-cb3-18" aria-hidden="true" tabindex="-1"></a></span>
 <span id="section-cb3-19"><a href="#section-cb3-19" aria-hidden="true" tabindex="-1"></a><span class="fu">plotMod</span>()</span></code></pre></div>
-<p><iframe data-deferred-src="app8ff86ccece7ca3bc3a249140f1b6d60b/?w=&amp;__subapp__=1" width="100%" height="400" class="shiny-frame shiny-frame-deferred"></iframe></p>
+<p><iframe data-deferred-src="appcb95ab3f1b3fd7dd268bf5611cdc1968/?w=&amp;__subapp__=1" width="100%" height="400" class="shiny-frame shiny-frame-deferred"></iframe></p>
 <p>This application is deployed here:</p>
 <p><a href="https://mjfrigaard.shinyapps.io/02-plotMod/"
 class="uri">https://mjfrigaard.shinyapps.io/02-plotMod/</a></p>
@@ -615,14 +615,14 @@ UI function, and the reactives (orange expressions) and
 <strong>Consumers</strong> (purple <code>$output</code> values) are in
 the server function:</p>
 <!-- images/module.png -->
-<p><img src="images/module.png" width="786" /></p>
+<p><img src="img/module.png" width="786" /></p>
 <p>As you can see from this figure, the <code>plotUI()</code> and
 <code>plotServer()</code> link the UI to the server via the shared
 <code>id</code> (<code>"graph"</code>). The module creates a namespace
 that contains all the inputs and outputs.</p>
 <p>Below is an adapted reactive graph for the inputs, reactives, and
 outputs used to create the graph in <code>plotMod()</code>:</p>
-<p><img src="images/plotDemo-module-graph.png" width="707" /></p>
+<p><img src="img/plotDemo-module-graph.png" width="707" /></p>
 <p>The three <code>inputId</code> values (<code>input$x_var</code>,
 <code>input$y_var</code>, and <code>input$color</code>) are used to
 create the <code>data()</code> reactive:</p>
@@ -638,7 +638,7 @@ class="sourceCode r"><code class="sourceCode r"><span id="section-cb5-1"><a href
 <span id="section-cb5-3"><a href="#section-cb5-3" aria-hidden="true" tabindex="-1"></a>               <span class="at">y =</span> input<span class="sc">$</span>y_var, </span>
 <span id="section-cb5-4"><a href="#section-cb5-4" aria-hidden="true" tabindex="-1"></a>               <span class="at">color =</span> input<span class="sc">$</span>color))</span></code></pre></div>
 <p>Collectively, these create the following in the UI:</p>
-<p><img src="images/plotDemo.png" width="943" /></p>
+<p><img src="img/plotDemo.png" width="943" /></p>
 </div>
 <div id="section-reactive-values" class="section level1">
 <h1>Reactive values</h1>
@@ -647,7 +647,7 @@ class="sourceCode r"><code class="sourceCode r"><span id="section-cb5-1"><a href
 <code>reactiveValues</code> (and the inputs) the UI. This is not
 necessary for the plot to render, but I’ve included it here to show what
 inputs are available in this namespace:</p>
-<p><img src="images/plotDemo-reactiveValues.png" width="738" /></p>
+<p><img src="img/plotDemo-reactiveValues.png" width="738" /></p>
 <p>The output shows the three <code>input</code> values I am using in
 the <code>data()</code> reactive (and graph). If we change the variables
 in the <code>selectInput()</code>, the values change in the

@@ -1,0 +1,13 @@
+name: nsproblemsPlot
+title: nsproblemsPlot
+username:
+account: mjfrigaard
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 6093419
+bundleId: 5799693
+url: https://mjfrigaard.shinyapps.io/nsproblemsPlot/
+when: 1649963743.16285
+lastSyncTime: 1649963743.16286
+asMultiple: FALSE
+asStatic: FALSE

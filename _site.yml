@@ -2,12 +2,12 @@ name: "fm-shiny-modules"
 output_dir: "docs"
 exclude: ["apps/"]
 navbar:
-  title: "fm-shiny-modules"
+  title: "shiny modules (field manual)"
   left:
-    - text: "modules"
+    - text: "Overview"
       href: index.html
-    - text: "A problematic shiny app"
-      href: problemApp.html
+    - text: "namespace problems"
+      href: nsproblemsApp.html
     - text: "A plot module"
       href: plotMod.html
     - text: "A data module"

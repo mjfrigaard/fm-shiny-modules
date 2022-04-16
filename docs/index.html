@@ -229,15 +229,15 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">fm-shiny-modules</a>
+      <a class="navbar-brand" href="index.html">shiny modules (field manual)</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="index.html">modules</a>
+  <a href="index.html">Overview</a>
 </li>
 <li>
-  <a href="problemApp.html">A problematic shiny app</a>
+  <a href="nsproblemsApp.html">namespace problems</a>
 </li>
 <li>
   <a href="plotMod.html">A plot module</a>
@@ -266,47 +266,38 @@ $(document).ready(function () {
 
 
 <p><br></p>
-<div id="shiny-module-field-manual" class="section level1">
-<h1>Shiny module ‘field manual’</h1>
-<p>The goal for this field manual is to quickly demonstrate how to
-create modules in shiny apps. Modules help us avoid namespace collision
-with shiny inputs/outputs, and partition app components into smaller,
-more manageable (i.e. modular) pieces. This means we can have
-inputs/outputs with the same names in the same app (as long as they are
-in different modules).</p>
-<p>Modules require the use of <code>shiny::NS()</code> for creating
-independent namespaces, which are then accessed with
-<code>shiny::moduleServer()</code>.</p>
+<div id="shiny-modules-a-field-manual" class="section level1">
+<h1>Shiny modules: a ‘field manual’</h1>
+<p>The goal for this website is to server as a ‘field manual’ for
+building shiny modules. It covers how to create modules, examples,
+common functions/purposes for modules, how to partition app components
+into smaller, more manageable (i.e. modular) pieces, and other best
+practices.</p>
 </div>
 <div id="background" class="section level1">
 <h1>Background</h1>
-<p>When I first started creating shiny applications, I assumed
-complexity was just a natural by-product of their design. Even when I
-separated the app into separate <code>ui.R</code> and
-<code>server.R</code> scripts, it quickly became hard to manage all the
-inputs and outputs.</p>
-<p>I experimented with modules for awhile, but the concepts didn’t start
-to click until shiny <a
-href="https://shiny.rstudio.com/articles/modules.html">version 1.5.0</a>
-with the introduction of the <a
-href="https://shiny.rstudio.com/reference/shiny/1.7.0/moduleServer.html"><code>moduleServer()</code></a>
-function. This function (along with the <code>NS()</code> function)
-helped me understand the purpose of modules (and the problem they
-solve).</p>
-<p>This repo contains an application that demonstrates the problem
-caused by namespace collision (<code>problemApp</code>), two modules
-that separate the app components (<code>plotMod</code> and
-<code>dataMod</code>), and a final app that combines both modules
-(<code>plotdataMod</code>)</p>
+<p>As complexity grows with shiny applications, it can quickly become
+hard to manage all the inputs and outputs. In shiny <a
+href="https://shiny.rstudio.com/articles/modules.html">version
+1.5.0</a>, the <a
+href="https://shiny.rstudio.com/reference/shiny/1.7.0/moduleServer.html"><code>moduleServer()</code>
+function</a> was introduced. <code>moduleServer()</code> is used with
+the <a
+href="https://shiny.rstudio.com/reference/shiny/1.0.5/NS.html"><code>NS()</code>
+function)</a> to create modules.</p>
 <p>I’ve also included some figures and tools for helping me understand
 how they work. The data used in this example comes from the <a
 href="https://allisonhorst.github.io/palmerpenguins/"><code>palmerpenguins</code>
 package</a>.</p>
+<p>, two modules that separate the app components (<code>plotMod</code>
+and <code>dataMod</code>), and a final app that combines both modules
+(<code>plotdataMod</code>)</p>
 </div>
-<div id="the-problem-problemapp" class="section level1">
-<h1>The problem: <code>problemApp</code></h1>
-<p><code>problemApp</code> is an application with a plot and table
-display (no modules). It demonstrates the issue of having duplicate
+<div id="the-problem-nsproblemapp" class="section level1">
+<h1>The problem: <code>nsproblemApp</code></h1>
+<p><code>nsproblemApp</code> demonstrates the problem caused by
+namespace collision. This app has a plot and table display without no
+modules. It demonstrates the issue of having duplicate
 <code>inputId</code>s in the same namespace.</p>
 </div>
 <div id="module-1-plotmod" class="section level1">
