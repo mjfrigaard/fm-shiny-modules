@@ -725,7 +725,7 @@ shinyApp(
   })
 
   # plot display
-  output$plot <- renderPlot({
+    output$plot <- renderPlot({
     # y labels
     y_lab <- str_replace_all(input$y_var, "_", " ")
     # x labels
@@ -754,21 +754,29 @@ shinyApp(
   }, options = list(height = 1100, width = 800))
 ```
 
-# App overview
+<br>
 
 This application has both the plot and table outputs, and six `selectInputs()`s for controlling the variables in the outputs (labeled **(table)** and **(graph)**). 
 
-```{r plotdata-ui-server-png, echo=FALSE, eval=TRUE}
-knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdata-ui-server.png")
-```
+<br>
+
+# Testing reactivity
+
+<br>
 
 To test the reactivity, we're going to change the variable for **X column (graph)** to `bill_depth_mm`. We should see the graph change (and we do):
+
+<br>
 
 ```{r plotdata-ui-server-x_var-png, echo=FALSE, eval=TRUE}
 knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdata-ui-server-x_var.png")
 ```
 
+<br>
+
 However, we also see the data in the table display change (even though we didn't change this input): 
+
+<br>
 
 ```{r plotdata-ui-server-x_var-table-png, echo=FALSE, eval=TRUE}
 knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdata-ui-server-x_var-table.png")
@@ -781,6 +789,8 @@ knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-m
 <br>
 
 ## Execution order
+
+<br>
 
 The answer to the question above is covered here in the '[execution order](https://mastering-shiny.org/basic-reactivity.html#execution-order)' section of Mastering Shiny: 
 
@@ -810,7 +820,33 @@ knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-m
 
 <br>
 
-But the `output$plot` also has a reactive dependency on `input$x_var`:
+But the `output$plot` also uses the value for `input$x_var` directly for the labels and mappings (not via the `data()` reactive):
+
+<br>
+
+```{r renderplot, eval=FALSE}
+ # plot display
+  output$plot <- renderPlot({
+    # y labels
+    y_lab <- str_replace_all(input$y_var, "_", " ")
+    # x labels
+    x_lab <- str_replace_all(input$x_var, "_", " ")
+    # graph
+    ggplot(data()) +
+      geom_point(aes_string(
+        x = input$x_var, 
+          y = input$y_var,
+        color = input$color
+      )) +
+      labs(
+        title =
+          paste0("Scatter plot of ", x_lab, " and ", y_lab),
+        x = x_lab,
+        y = y_lab
+      )
+  })
+```
+
 
 ```{r reactive-dependencypng, echo=FALSE, eval=TRUE, fig.align='center', out.height='80%', out.width='80%'}
 knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/reactive-dependency.png")
@@ -850,14 +886,14 @@ knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-m
 
 If we deployed these apps using `display.mode = "showcase"` then we could see the `output$graph` and `output$table` light up when we change the **X column (graph)**:
 
-```{r plotdataApp-x_var-gif, echo=FALSE, eval=TRUE}
+```{r nsproblems-change-x-col.gif, echo=FALSE, eval=TRUE}
 knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/nsproblems-change-x-col.gif")
 ```
 
 When we check the additional `selectInput()`s, we can see that only the values for **(graph)** trigger the code in the server (none of the values for **(table)** trigger a response).
 
-```{r plotdataApp-x_var-no-reaction-gif, echo=FALSE, eval=TRUE}
-# knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/plotdataApp-x_var-no-reaction.gif")
+```{r nsproblems-no-change-x-col.gif, echo=FALSE, eval=TRUE}
+knitr::include_graphics("https://raw.githubusercontent.com/mjfrigaard/fm-shiny-modules/main/img/nsproblems-no-change-x-col.gif")
 ```
 
 # Recap
